@@ -43,6 +43,13 @@ catalogs:
     '@antfu/utils':
       specifier: ^9.3.0
       version: 9.3.0
+  skills:
+    skills:
+      specifier: ^1.3.4
+      version: 1.3.4
+    skills-manifest:
+      specifier: ^0.3.2
+      version: 0.3.3
   testing:
     tinyexec:
       specifier: ^1.0.2
@@ -92,6 +99,12 @@ importers:
       simple-git-hooks:
         specifier: catalog:cli
         version: 2.13.1
+      skills:
+        specifier: catalog:skills
+        version: 1.3.4
+      skills-manifest:
+        specifier: catalog:skills
+        version: 0.3.3(skills@1.3.4)
       tinyexec:
         specifier: catalog:testing
         version: 1.0.2
@@ -2093,6 +2106,17 @@ packages:
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+
+  skills-manifest@0.3.3:
+    resolution: {integrity: sha512-aSjKzEGbr0ZKxIj0+UsWy65RGu2ooFr+BaaP0PW50iv140vkZyEs9OjJQ7GyXgQ8NQ15gBfmhjfxxh66+NXghw==}
+    hasBin: true
+    peerDependencies:
+      skills: ^1.3.4
+
+  skills@1.3.4:
+    resolution: {integrity: sha512-0FVx8BJ9eTTBNEA2q/fyc5Q3l+inu3x0OS9Vnj7KnC4UzlBIMcm6PsagF9AkCtJZItFkwDTbCdWsa6NBfj8RQg==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   slice-ansi@7.1.2:
     resolution: {integrity: sha512-iOBWFgUX7caIZiuutICxVgX1SdxwAVFFKwt1EvMYYec/NWO5meOJ6K5uQxhrYBdQJne4KxiqZc+KptFOWFSI9w==}
@@ -4465,6 +4489,18 @@ snapshots:
   simple-git-hooks@2.13.1: {}
 
   sisteransi@1.0.5: {}
+
+  skills-manifest@0.3.3(skills@1.3.4):
+    dependencies:
+      c12: 3.3.3
+      citty: 0.2.0
+      nypm: 0.6.4
+      skills: 1.3.4
+      tinyexec: 1.0.2
+    transitivePeerDependencies:
+      - magicast
+
+  skills@1.3.4: {}
 
   slice-ansi@7.1.2:
     dependencies:

@@ -27,10 +27,17 @@
     "main": "./dist/index.mjs",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
-    "bin": { "clawflow": "./bin/index.mjs" }
+    "bin": {
+      "clawflow": "./bin/index.mjs"
+    }
   },
-  "bin": { "clawflow": "./bin/index.dev.mjs" },
-  "files": ["bin", "dist"],
+  "bin": {
+    "clawflow": "./bin/index.dev.mjs"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -40,9 +47,8 @@
     "start": "tsx src/index.ts",
     "test": "vitest",
     "typecheck": "tsc",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks && skills-manifest install"
   },
-  "dependencies": {},
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
     "@antfu/ni": "catalog:cli",
@@ -53,6 +59,8 @@
     "lint-staged": "catalog:cli",
     "publint": "catalog:cli",
     "simple-git-hooks": "catalog:cli",
+    "skills": "catalog:skills",
+    "skills-manifest": "catalog:skills",
     "tinyexec": "catalog:testing",
     "tsdown": "catalog:cli",
     "tsx": "catalog:cli",
