@@ -49,6 +49,9 @@
     "typecheck": "tsc",
     "prepare": "simple-git-hooks && skills-manifest install"
   },
+  "dependencies": {
+    "commander": "catalog:"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
     "@antfu/ni": "catalog:cli",

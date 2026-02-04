@@ -1,2 +1,2 @@
-export const one = 1
-export const two = 2
+export { findProjectRoot, loadConfig } from './config/load.js'
+export type { ResolvedConfig } from './config/types.js'

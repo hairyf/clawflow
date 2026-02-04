@@ -1,15 +1,15 @@
-catalogMode: prefer
-
-ignoreWorkspaceRootCheck: true
-
-shellEmulator: true
-
-trustPolicy: no-downgrade
 packages:
   - playground
   - docs
   - packages/*
   - examples/*
+
+catalog:
+  commander: ^12.1.0
+  jiti: ^2.6.1
+
+catalogMode: prefer
+
 catalogs:
   cli:
     '@antfu/eslint-config': ^6.6.1
@@ -35,6 +35,13 @@ catalogs:
     yaml: ^2.8.2
   types:
     '@types/node': ^25.0.1
+
+ignoreWorkspaceRootCheck: true
+
 onlyBuiltDependencies:
   - esbuild
   - simple-git-hooks
+
+shellEmulator: true
+
+trustPolicy: no-downgrade
