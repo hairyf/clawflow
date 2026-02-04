@@ -5,5 +5,9 @@ export default antfu(
   {
     type: 'lib',
     pnpm: true,
+    ignores: [
+      '**/skills/**',
+      '**/sources/**',
+    ],
   },
 )

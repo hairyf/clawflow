@@ -12,5 +12,9 @@
     "verbatimModuleSyntax": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "sources/**/*.ts",
+    "skills/**/*.ts"
+  ]
 }

@@ -5,5 +5,16 @@
     "claude-code"
   ],
   "skills": {
+    "./": [
+      "agent-flow",
+      "claude-flow"
+    ],
+    "hairyf/skills": [
+      "arch-tsdown-cli",
+      "create-skill",
+      "create-skill-from-repo",
+      "unjs",
+      "vitest"
+    ]
   }
 }
