@@ -95,6 +95,9 @@ importers:
       bumpp:
         specifier: catalog:cli
         version: 10.4.0
+      clawflow:
+        specifier: workspace:*
+        version: 'link:'
       eslint:
         specifier: catalog:cli
         version: 9.39.2(jiti@2.6.1)

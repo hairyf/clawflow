@@ -8,17 +8,17 @@ const program = new Command()
 
 program
   .name('clawflow')
-  .description('工程化、项目绑定的 AI 工作流与多 Agent 编排（基于 OpenClaw）')
+  .description('Project-bound AI workflows and multi-agent orchestration (based on OpenClaw)')
   .version('0.0.0')
 
 program
   .command('create <project-name>')
-  .description('创建项目脚手架（含 .openclaw、src 等，配置由 OpenClaw 接管）')
+  .description('Create project scaffold (.openclaw, src, etc.; config managed by OpenClaw)')
   .action(async (projectName: string) => {
     try {
       await runCreate(projectName)
-      console.log(`已创建项目: ${projectName}/`)
-      console.log('  - 进入目录后执行 clawflow gateway start 或 clawflow tui 使用 OpenClaw。')
+      console.log(`Project created: ${projectName}/`)
+      console.log('  - Run clawflow gateway start or clawflow tui from that directory to use OpenClaw.')
     }
     catch (e) {
       console.error((e as Error).message)
@@ -34,7 +34,7 @@ program
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['gateway', ...args])
@@ -42,13 +42,13 @@ program
   })
 
 program.command('tui')
-  .description('委托 openclaw tui')
+  .description('Delegate to openclaw tui')
   .argument('[args...]')
   .allowUnknownOption(true)
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['tui', ...args])
@@ -56,13 +56,13 @@ program.command('tui')
   })
 
 program.command('status')
-  .description('委托 openclaw status')
+  .description('Delegate to openclaw status')
   .argument('[args...]')
   .allowUnknownOption(true)
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['status', ...args])
@@ -70,13 +70,13 @@ program.command('status')
   })
 
 program.command('health')
-  .description('委托 openclaw health')
+  .description('Delegate to openclaw health')
   .argument('[args...]')
   .allowUnknownOption(true)
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['health', ...args])
@@ -84,13 +84,13 @@ program.command('health')
   })
 
 program.command('doctor')
-  .description('委托 openclaw doctor')
+  .description('Delegate to openclaw doctor')
   .argument('[args...]')
   .allowUnknownOption(true)
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['doctor', ...args])
@@ -98,13 +98,13 @@ program.command('doctor')
   })
 
 program.command('channels')
-  .description('委托 openclaw channels')
+  .description('Delegate to openclaw channels')
   .allowUnknownOption(true)
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['channels', ...args])
@@ -112,13 +112,13 @@ program.command('channels')
   })
 
 program.command('pairing')
-  .description('委托 openclaw pairing')
+  .description('Delegate to openclaw pairing')
   .allowUnknownOption(true)
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['pairing', ...args])
@@ -126,13 +126,13 @@ program.command('pairing')
   })
 
 program.command('cron')
-  .description('委托 openclaw cron')
+  .description('Delegate to openclaw cron')
   .allowUnknownOption(true)
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['cron', ...args])
@@ -140,13 +140,13 @@ program.command('cron')
   })
 
 program.command('sessions')
-  .description('委托 openclaw sessions')
+  .description('Delegate to openclaw sessions')
   .allowUnknownOption(true)
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['sessions', ...args])
@@ -154,13 +154,13 @@ program.command('sessions')
   })
 
 program.command('sandbox')
-  .description('委托 openclaw sandbox')
+  .description('Delegate to openclaw sandbox')
   .allowUnknownOption(true)
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['sandbox', ...args])
@@ -168,13 +168,13 @@ program.command('sandbox')
   })
 
 program.command('models')
-  .description('委托 openclaw models')
+  .description('Delegate to openclaw models')
   .allowUnknownOption(true)
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['models', ...args])
@@ -182,13 +182,13 @@ program.command('models')
   })
 
 program.command('nodes')
-  .description('委托 openclaw nodes')
+  .description('Delegate to openclaw nodes')
   .allowUnknownOption(true)
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['nodes', ...args])
@@ -196,13 +196,13 @@ program.command('nodes')
   })
 
 program.command('browser')
-  .description('委托 openclaw browser')
+  .description('Delegate to openclaw browser')
   .allowUnknownOption(true)
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, ['browser', ...args])
@@ -210,12 +210,12 @@ program.command('browser')
   })
 
 program.command('openclaw')
-  .description('透传至 openclaw（例: clawflow openclaw -- gateway start）')
+  .description('Pass-through to openclaw (e.g. clawflow openclaw -- gateway start)')
   .argument('[args...]')
   .action(async (args: string[]) => {
     const resolved = await loadConfig()
     if (!resolved) {
-      console.error('未在项目目录中。')
+      console.error('Not in a project directory.')
       process.exit(1)
     }
     const code = await runOpenClaw(resolved, args)

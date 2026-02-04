@@ -4,7 +4,7 @@ import path from 'node:path'
 import process from 'node:process'
 
 /**
- * 向上查找项目根：以 .openclaw 目录或 package.json 中 clawflow 字段为标记。
+ * Walk upward to find project root: marked by .openclaw directory or clawflow field in package.json.
  */
 export function findProjectRoot(cwd: string): string | null {
   let dir = path.resolve(cwd)
@@ -19,7 +19,7 @@ export function findProjectRoot(cwd: string): string | null {
         if (pkg.clawflow !== undefined)
           return dir
       }
-      catch { /* ignore */ }
+      catch { /* use default on parse failure */ }
     }
     dir = path.dirname(dir)
   }
@@ -27,8 +27,8 @@ export function findProjectRoot(cwd: string): string | null {
 }
 
 /**
- * 从当前工作目录向上查找项目根，并解析委托所需的路径。
- * 工作区取自 .openclaw/openclaw.json 的 agents.defaults.workspace，若无则默认为 projectRoot/src。
+ * Find project root from current working directory and resolve paths needed for delegation.
+ * Workspace is taken from agents.defaults.workspace in .openclaw/openclaw.json; defaults to projectRoot/src if absent.
  */
 export async function loadConfig(cwd: string = process.cwd()): Promise<ResolvedConfig | null> {
   const projectRoot = findProjectRoot(cwd)
@@ -46,7 +46,7 @@ export async function loadConfig(cwd: string = process.cwd()): Promise<ResolvedC
       if (typeof w === 'string' && w)
         workspaceDir = path.isAbsolute(w) ? w : path.resolve(projectRoot, w)
     }
-    catch { /* 解析失败则用默认 */ }
+    catch { /* use default on parse failure */ }
   }
 
   return {

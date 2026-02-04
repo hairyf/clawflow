@@ -19,18 +19,18 @@ function writeIfMissing(filePath: string, content: string): void {
 }
 
 /**
- * 创建项目脚手架：.openclaw、.collective、agents、skills、src、package.json。
- * 配置由 OpenClaw 接管（.openclaw/openclaw.json），不再使用 clawflow.config。
+ * Create project scaffold: .openclaw, .collective, agents, skills, src, package.json.
+ * Config is managed by OpenClaw (.openclaw/openclaw.json); clawflow.config is no longer used.
  */
 export async function runCreate(projectName: string, cwd: string = process.cwd()): Promise<void> {
   const targetDir = path.resolve(cwd, projectName)
   if (fs.existsSync(targetDir)) {
     const stat = fs.statSync(targetDir)
     if (!stat.isDirectory())
-      throw new Error(`已存在同名文件: ${targetDir}`)
+      throw new Error(`A file already exists with this name: ${targetDir}`)
     const hasContent = fs.readdirSync(targetDir).length > 0
     if (hasContent)
-      throw new Error(`目录非空: ${targetDir}，请换名或使用空目录`)
+      throw new Error(`Directory is not empty: ${targetDir}; use a different name or an empty directory`)
   }
 
   mkdirp(targetDir)
@@ -46,15 +46,15 @@ export async function runCreate(projectName: string, cwd: string = process.cwd()
 
   writeIfMissing(
     path.join(targetDir, 'src', 'AGENTS.md'),
-    '# Agent Skills\n\n项目级 Agent 技能与约定（由 OpenClaw 注入）。\n',
+    '# Agent Skills\n\nProject-level Agent skills and conventions (injected by OpenClaw).\n',
   )
   writeIfMissing(
     path.join(targetDir, 'src', 'SOUL.md'),
-    '# Soul / 人格\n\n可选：Agent 人格与风格说明。\n',
+    '# Soul / Persona\n\nOptional: Agent persona and style description.\n',
   )
   writeIfMissing(
     path.join(targetDir, 'src', 'TOOLS.md'),
-    '# Tools\n\n可选：工具使用说明（由 OpenClaw 注入）。\n',
+    '# Tools\n\nOptional: Tool usage notes (injected by OpenClaw).\n',
   )
 
   const pkgPath = path.join(targetDir, 'package.json')

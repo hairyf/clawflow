@@ -6,61 +6,33 @@
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-工程化、项目绑定的 AI 工作流与多 Agent 编排，基于 [OpenClaw](https://github.com/openclaw/openclaw)。将 OpenClaw 的能力与软件工程实践结合：工作区与状态绑定到项目目录，AI 生成物可追踪、可审查、可协作。
+Project-bound AI workflow and multi-Agent orchestration, based on [OpenClaw](https://github.com/openclaw/openclaw), combining OpenClaw's capabilities with software engineering practices: binding the workspace and state to the project directory, making AI artifacts traceable, reviewable, and collaborative.
 
-## 快速开始
+## Quick Start
 
 ```bash
-# 创建项目脚手架
+# Create project scaffold
 pnpx clawflow create my-app
 cd my-app
 
-# 启动 OpenClaw Gateway（需已安装 openclaw）
+# Start OpenClaw Gateway (requires openclaw installed)
 clawflow gateway start
 
-# 或启动 TUI
+# Or start TUI
 clawflow tui
 ```
 
-## 命令
+## Commands
 
-| 命令 | 说明 |
+| Command | Description |
 |------|------|
-| `clawflow create <project-name>` | 创建项目脚手架（含 `.openclaw/`、`src/` 等，配置由 OpenClaw 接管） |
-| `clawflow gateway [start\|status\|stop\|restart]` | 委托 openclaw gateway |
-| `clawflow tui` | 委托 openclaw tui |
-| `clawflow status` / `clawflow health` / `clawflow doctor` | 委托 openclaw 健康检查 |
-| `clawflow channels` / `clawflow pairing` / `clawflow cron` / `clawflow sessions` | 委托 openclaw 对应子命令 |
-| `clawflow sandbox` / `clawflow models` / `clawflow nodes` / `clawflow browser` | 委托 openclaw 对应子命令 |
-| `clawflow openclaw -- <args>` | 透传至 openclaw |
-
-## 配置
-
-配置由 **OpenClaw 接管**：项目内直接使用 `.openclaw/openclaw.json`。`clawflow create` 会生成最小配置（`$include` + `agents.defaults.workspace`），其余按 [OpenClaw 配置](https://github.com/openclaw/openclaw) 编辑该文件即可。
-
-## 依赖
-
-- 需已安装 [OpenClaw](https://github.com/openclaw/openclaw)（`openclaw` CLI）以使用 gateway、tui、sessions 等委托命令。
-
-## Note for Developers
-
-This starter recommands using [npm Trusted Publisher](https://github.com/e18e/ecosystem-issues/issues/201), where the release is done on CI to ensure the security of the packages.
-
-To do so, you need to run `pnpm publish` manually for the very first time to create the package on npm, and then go to `https://www.npmjs.com/package/<your-package-name>/access` to set the connection to your GitHub repo.
-
-Then for the future releases, you can run `pnpm run release` to do the release and the GitHub Actions will take care of the release process.
-
-## Sponsors
-
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg">
-    <img src='https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg'/>
-  </a>
-</p>
-
-## License
-
-[MIT](./LICENSE) License © [Hairyf](https://github.com/hairyf)
+| `clawflow create <project-name>` | Create project scaffold (`.openclaw/`, `src/`, etc.; config managed by OpenClaw) |
+| `clawflow gateway [start\|status\|stop\|restart]` | Delegate to openclaw gateway |
+| `clawflow tui` | Delegate to openclaw tui |
+| `clawflow status` / `clawflow health` / `clawflow doctor` | Delegate to openclaw health check |
+| `clawflow channels` / `clawflow pairing` / `clawflow cron` / `clawflow sessions` | Delegate to openclaw corresponding subcommands |
+| `clawflow sandbox` / `clawflow models` / `clawflow nodes` / `clawflow browser` | Delegate to openclaw corresponding subcommands |
+| `clawflow openclaw -- <args>` | Pass through to openclaw |
 
 <!-- Badges -->
 
