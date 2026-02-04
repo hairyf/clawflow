@@ -1,4 +1,4 @@
-# pkg-placeholder
+# clawflow
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
@@ -30,13 +30,13 @@ Then for the future releases, you can run `pnpm run release` to do the release a
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/pkg-placeholder
-[npm-downloads-src]: https://img.shields.io/npm/dm/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/pkg-placeholder
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669&label=minzip
-[bundle-href]: https://bundlephobia.com/result?p=pkg-placeholder
-[license-src]: https://img.shields.io/github/license/antfu/pkg-placeholder.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/antfu/pkg-placeholder/blob/main/LICENSE
+[npm-version-src]: https://img.shields.io/npm/v/clawflow?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/clawflow
+[npm-downloads-src]: https://img.shields.io/npm/dm/clawflow?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/clawflow
+[bundle-src]: https://img.shields.io/bundlephobia/minzip/clawflow?style=flat&colorA=080f12&colorB=1fa669&label=minzip
+[bundle-href]: https://bundlephobia.com/result?p=clawflow
+[license-src]: https://img.shields.io/github/license/antfu/clawflow.svg?style=flat&colorA=080f12&colorB=1fa669
+[license-href]: https://github.com/antfu/clawflow/blob/main/LICENSE
 [jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/pkg-placeholder
+[jsdocs-href]: https://www.jsdocs.io/package/clawflow
