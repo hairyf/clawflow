@@ -67,6 +67,11 @@ export interface GatewayConfig {
   port?: number
 }
 
+export interface HeartbeatConfig {
+  enabled?: boolean
+  intervalS?: number
+}
+
 export interface ClawflowConfig {
   agents?: { defaults?: AgentDefaults }
   providers?: {
@@ -81,6 +86,7 @@ export interface ClawflowConfig {
   tools?: ToolsConfig
   channels?: ChannelsConfig
   gateway?: GatewayConfig
+  heartbeat?: HeartbeatConfig
 }
 
 export const defaultConfig: ClawflowConfig = {
@@ -106,4 +112,5 @@ export const defaultConfig: ClawflowConfig = {
     feishu: { enabled: false, appId: '', appSecret: '', allowFrom: [] },
   },
   gateway: { host: '0.0.0.0', port: 18790 },
+  heartbeat: { enabled: true, intervalS: 30 * 60 },
 }

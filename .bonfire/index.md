@@ -25,6 +25,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
+- **2025-02-07**: 实现 **heartbeat/**：HeartbeatService（定时读 workspace/HEARTBEAT.md、onHeartbeat 回调、triggerNow）；config 增加 heartbeat.enabled / heartbeat.intervalS；导出自 core
 - **2025-02-07**: 实现 **channels/** 模块：base、manager、telegram、discord、feishu、whatsapp；config schema 增加 channels/gateway；CLI 增加 `channels status`（@clack/prompts intro/outro）
 - **2025-02-07**: Bonfire start；完成 nanobot vs clawflow 模块对比，整理未实现模块与实现差异清单，作为待办记入 Next Priorities
 
@@ -34,7 +35,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 **未实现模块**（对照 nanobot）：
 1. [x] **channels/** - 已实现（base、manager、telegram、discord、feishu、whatsapp）
-2. [ ] **heartbeat/** - HeartbeatService（定时读 HEARTBEAT.md 唤醒 agent）
+2. [x] **heartbeat/** - HeartbeatService（定时读 HEARTBEAT.md 唤醒 agent）
 3. [ ] **providers/transcription** - GroqTranscriptionProvider（语音转文字）
 4. [ ] **bridge/** - WhatsApp WebSocket 桥接（独立 TS 项目）
 5. [ ] **gateway 命令** - 启动 channels + heartbeat + cron + agent 的网关模式
@@ -72,6 +73,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 - `packages/core/src/agent/` - 代理循环、上下文、记忆、技能、子代理
 - `packages/core/src/bus/` - 事件总线、队列
 - `packages/core/src/channels/` - 聊天渠道（base、manager、telegram、discord、feishu、whatsapp）
+- `packages/core/src/heartbeat/` - 定时读 HEARTBEAT.md 唤醒 agent（HeartbeatService）
 - `packages/core/src/tools/` - 工具注册、cron、filesystem、message、shell、spawn、web
 - `packages/core/src/providers/` - LLM 提供方（base、openai）
 - `packages/core/src/cron/` - 定时任务服务

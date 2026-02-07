@@ -1,3 +1,5 @@
 export { BaseChannel, ChannelManager, DiscordChannel, FeishuChannel, TelegramChannel, WhatsAppChannel } from './channels/index'
 export type { ChannelConfig } from './channels/index'
 export { run } from './cli/index'
+export { DEFAULT_HEARTBEAT_INTERVAL_S, HEARTBEAT_PROMPT, HeartbeatService } from './heartbeat/index'
+export type { HeartbeatServiceOptions, OnHeartbeatCallback } from './heartbeat/index'
