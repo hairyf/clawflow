@@ -268,6 +268,7 @@ const main = defineCommand({
             deliver: { type: 'boolean', alias: 'd', default: false, description: 'Deliver response to channel' },
             to: { type: 'string', alias: 't', description: 'Recipient for delivery (chat_id)' },
             channel: { type: 'string', alias: 'ch', description: 'Channel for delivery (e.g. telegram, whatsapp)' },
+            deleteAfterRun: { type: 'boolean', default: false, description: 'Remove job after it runs (for --at jobs)' },
           },
           async run({ args }) {
             let schedule: CronSchedule
@@ -294,6 +295,7 @@ const main = defineCommand({
               deliver: args.deliver ?? false,
               channel: args.channel as string | undefined,
               to: args.to as string | undefined,
+              deleteAfterRun: args.deleteAfterRun ?? false,
             })
             consola.success(`Added job '${job.name}' (${job.id})`)
           },

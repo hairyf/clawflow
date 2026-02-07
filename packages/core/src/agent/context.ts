@@ -3,7 +3,9 @@
  * @see sources/nanobot/nanobot/agent/context.py
  */
 
+import { Buffer } from 'node:buffer'
 import { existsSync, readFileSync } from 'node:fs'
+import { extname } from 'node:path'
 import { join } from 'pathe'
 import { getRuntimeInfo } from '../utils/helpers'
 import { MemoryStore } from './memory'
@@ -11,15 +13,29 @@ import { SkillsLoader } from './skills'
 
 const BOOTSTRAP_FILES = ['AGENTS.md', 'SOUL.md', 'USER.md', 'TOOLS.md', 'IDENTITY.md']
 
+/** User message content part for multimodal (image_url + text). */
+export type UserContentPart
+  = | { type: 'text', text: string }
+    | { type: 'image_url', image_url: { url: string } }
+
+/** MIME for image extensions (nanobot _build_user_content equivalent). */
+const IMAGE_MIME: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.gif': 'image/gif',
+  '.webp': 'image/webp',
+}
+
 export class ContextBuilder {
   private workspace: string
   private memory: MemoryStore
   private skills: SkillsLoader
 
-  constructor(workspace: string) {
+  constructor(workspace: string, skills?: SkillsLoader) {
     this.workspace = workspace
     this.memory = new MemoryStore(workspace)
-    this.skills = new SkillsLoader(workspace)
+    this.skills = skills ?? new SkillsLoader(workspace)
   }
 
   buildSystemPrompt(_skillNames?: string[]): string {
@@ -57,9 +73,23 @@ Reply directly with text for normal conversation. Use the message tool only when
     const mem = this.memory.getMemoryContext()
     if (mem)
       parts.push(`# Memory\n\n${mem}`)
+    // Progressive skills: 1) always-loaded skills full content
+    const alwaysSkills = this.skills.getAlwaysSkills()
+    if (alwaysSkills.length) {
+      const alwaysContent = this.skills.loadSkillsForContext(alwaysSkills)
+      if (alwaysContent)
+        parts.push(`# Active Skills\n\n${alwaysContent}`)
+    }
+    // 2) Skills summary (agent uses read_file to load on demand)
     const skillsSummary = this.skills.buildSkillsSummary()
-    if (skillsSummary)
-      parts.push(`# Skills\n\n${skillsSummary}`)
+    if (skillsSummary) {
+      parts.push(`# Skills
+
+The following skills extend your capabilities. To use a skill, read its SKILL.md file using the read_file tool.
+Skills with available="false" need dependencies installed first - you can try installing them with apt/brew.
+
+${skillsSummary}`)
+    }
     return parts.join('\n\n---\n\n')
   }
 
@@ -68,17 +98,46 @@ Reply directly with text for normal conversation. Use the message tool only when
     currentMessage: string
     channel?: string
     chatId?: string
-  }): Array<{ role: string, content: string }> {
+    /** Optional local file paths for images (built like nanobot _build_user_content). */
+    media?: string[]
+  }): Array<{ role: string, content: string | UserContentPart[] }> {
     const system = this.buildSystemPrompt()
     const sessionNote = (options.channel && options.chatId)
       ? `\n\n## Current Session\nChannel: ${options.channel}\nChat ID: ${options.chatId}`
       : ''
-    const messages: Array<{ role: string, content: string }> = [
+    const userContent = this.buildUserContent(options.currentMessage, options.media)
+    const messages: Array<{ role: string, content: string | UserContentPart[] }> = [
       { role: 'system', content: system + sessionNote },
       ...options.history,
-      { role: 'user', content: options.currentMessage },
+      { role: 'user', content: userContent },
     ]
     return messages
+  }
+
+  /**
+   * Build user message content with optional base64-encoded images (nanobot _build_user_content).
+   * Returns plain text if no media or no valid image paths; otherwise image_url parts + text.
+   */
+  buildUserContent(text: string, media?: string[]): string | UserContentPart[] {
+    if (!media?.length)
+      return text
+    const images: UserContentPart[] = []
+    for (const path of media) {
+      const mime = IMAGE_MIME[extname(path).toLowerCase()]
+      if (!mime || !existsSync(path))
+        continue
+      try {
+        const buf = readFileSync(path)
+        const b64 = Buffer.from(buf).toString('base64')
+        images.push({ type: 'image_url', image_url: { url: `data:${mime};base64,${b64}` } })
+      }
+      catch {
+        /* skip failed reads */
+      }
+    }
+    if (images.length === 0)
+      return text
+    return [...images, { type: 'text', text }]
   }
 
   addAssistantMessage(

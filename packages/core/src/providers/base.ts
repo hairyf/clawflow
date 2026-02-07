@@ -21,7 +21,16 @@ export function hasToolCalls(r: LLMResponse): boolean {
   return r.toolCalls.length > 0
 }
 
-export interface ChatMessage { role: string, content?: string, tool_calls?: unknown[] }
+/** User content can be plain text or multimodal (image_url + text). */
+export type UserContentPart
+  = | { type: 'text', text: string }
+    | { type: 'image_url', image_url: { url: string } }
+
+export interface ChatMessage {
+  role: string
+  content?: string | UserContentPart[]
+  tool_calls?: unknown[]
+}
 
 export type ToolExecutor = (name: string, args: Record<string, unknown>) => Promise<string>
 

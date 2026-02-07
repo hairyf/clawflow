@@ -61,6 +61,22 @@ export class SubagentManager {
     originChannel: string,
     originChatId: string,
   ): Promise<void> {
+    try {
+      await this.executeSubagent(taskId, task, label, originChannel, originChatId)
+    }
+    catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err)
+      await this.announceResult(label, task, `Error: ${errorMsg}`, originChannel, originChatId, 'error')
+    }
+  }
+
+  private async executeSubagent(
+    taskId: string,
+    task: string,
+    label: string,
+    originChannel: string,
+    originChatId: string,
+  ): Promise<void> {
     const tools = new ToolRegistry()
     const allowedDir = this.restrictToWorkspace ? this.workspace : null
     tools.register(readFileTool(allowedDir))
@@ -122,14 +138,26 @@ ${this.workspace}`
     }
     if (finalResult === null)
       finalResult = 'Task completed but no final response.'
-    const announceContent = `[Subagent '${label}' completed]
+    await this.announceResult(label, task, finalResult, originChannel, originChatId, 'ok')
+  }
+
+  private async announceResult(
+    label: string,
+    task: string,
+    result: string,
+    originChannel: string,
+    originChatId: string,
+    status: 'ok' | 'error',
+  ): Promise<void> {
+    const statusText = status === 'ok' ? 'completed successfully' : 'failed'
+    const announceContent = `[Subagent '${label}' ${statusText}]
 
 Task: ${task}
 
 Result:
-${finalResult}
+${result}
 
-Summarize this briefly for the user (1-2 sentences). Do not mention "subagent" or task IDs.`
+Summarize this naturally for the user. Keep it brief (1-2 sentences). Do not mention technical details like "subagent" or task IDs.`
     const msg: InboundMessage = {
       channel: 'system',
       senderId: 'subagent',

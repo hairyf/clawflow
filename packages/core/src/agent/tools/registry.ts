@@ -4,6 +4,7 @@
  */
 
 import type { Tool, ToolDefinition } from './base'
+import { validateToolParams } from './base'
 
 export class ToolRegistry {
   private tools = new Map<string, Tool>()
@@ -12,8 +13,21 @@ export class ToolRegistry {
     this.tools.set(tool.name, tool)
   }
 
+  unregister(name: string): void {
+    this.tools.delete(name)
+  }
+
   get(name: string): Tool | undefined {
     return this.tools.get(name)
+  }
+
+  has(name: string): boolean {
+    return this.tools.has(name)
+  }
+
+  /** List of registered tool names. */
+  get toolNames(): string[] {
+    return Array.from(this.tools.keys())
   }
 
   getDefinitions(): ToolDefinition[] {
@@ -31,6 +45,11 @@ export class ToolRegistry {
     const tool = this.tools.get(name)
     if (!tool)
       return `Error: Tool '${name}' not found`
+    const errors = tool.validateParams
+      ? tool.validateParams(params)
+      : validateToolParams(tool.parameters, params)
+    if (errors.length > 0)
+      return `Error: Invalid parameters for tool '${name}': ${errors.join('; ')}`
     try {
       return await tool.execute(params)
     }

@@ -37,10 +37,16 @@ interface IncomingAssistantMessage {
   tool_calls?: Array<{ id: string, function: { name: string, arguments: string } }>
 }
 
+/** Incoming user content: text or multimodal (image_url + text). Converted to SDK ImagePart/TextPart in toCoreMessages. */
+type IncomingUserContent = string | Array<
+  | { type: 'text', text: string }
+  | { type: 'image_url', image_url: { url: string } }
+>
+
 /** Incoming chat message union */
 type IncomingMessage
   = | { role: 'system', content?: string }
-    | { role: 'user', content?: string }
+    | { role: 'user', content?: IncomingUserContent }
     | IncomingAssistantMessage
     | IncomingToolMessage
 
@@ -165,7 +171,16 @@ function toCoreMessages(messages: IncomingMessage[]): ModelMessage[] {
       out.push({ role: 'system', content: m.content ?? '' })
     }
     else if (m.role === 'user') {
-      out.push({ role: 'user', content: m.content ?? '' })
+      const u = m as IncomingMessage & { role: 'user', content?: IncomingUserContent }
+      const raw = u.content ?? ''
+      const content = typeof raw === 'string'
+        ? raw
+        : raw.map((part): { type: 'text', text: string } | { type: 'image', image: URL } => {
+            if (part.type === 'text')
+              return { type: 'text', text: part.text }
+            return { type: 'image', image: new URL(part.image_url.url) }
+          })
+      out.push({ role: 'user', content } as ModelMessage)
     }
     else if (m.role === 'assistant') {
       const assistant = m as IncomingAssistantMessage

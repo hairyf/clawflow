@@ -218,7 +218,7 @@ export class CronService {
     name: string,
     schedule: CronSchedule,
     message: string,
-    opts: { deliver?: boolean, channel?: string, to?: string } = {},
+    opts: { deliver?: boolean, channel?: string, to?: string, deleteAfterRun?: boolean } = {},
   ): CronJob {
     const store = this.loadStore()
     const now = nowMs()
@@ -237,6 +237,7 @@ export class CronService {
       state: { nextRunAtMs: computeNextRun(schedule, now) },
       createdAtMs: now,
       updatedAtMs: now,
+      deleteAfterRun: opts.deleteAfterRun,
     }
     store.jobs.push(job)
     this.saveStore()

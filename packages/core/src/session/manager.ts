@@ -3,7 +3,7 @@
  * @see sources/nanobot/nanobot/session/manager.py
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'pathe'
 import { getSessionsPath, safeFilename } from '../utils/helpers'
 
@@ -116,4 +116,60 @@ export class SessionManager {
     writeFileSync(path, lines.join('\n'), 'utf-8')
     this.cache.set(session.key, session)
   }
+
+  /** Remove session from cache and delete file. Returns true if file was deleted. */
+  delete(key: string): boolean {
+    this.cache.delete(key)
+    const path = this.sessionPath(key)
+    if (existsSync(path)) {
+      unlinkSync(path)
+      return true
+    }
+    return false
+  }
+
+  /** List all sessions (read metadata from each *.jsonl), sorted by updatedAt desc. */
+  listSessions(): SessionListItem[] {
+    if (!existsSync(this.sessionsDir))
+      return []
+    const files = readdirSync(this.sessionsDir).filter(f => f.endsWith('.jsonl'))
+    const sessions: SessionListItem[] = []
+    for (const file of files) {
+      try {
+        const path = join(this.sessionsDir, file)
+        const content = readFileSync(path, 'utf-8')
+        const firstLine = content.split('\n').find(l => l.trim())
+        if (!firstLine)
+          continue
+        const data = JSON.parse(firstLine) as Record<string, unknown>
+        if (data._type !== 'metadata')
+          continue
+        const stem = file.slice(0, -'.jsonl'.length)
+        sessions.push({
+          key: stem.replace(/_/g, ':'),
+          createdAt: (data.created_at as string) ?? '',
+          updatedAt: (data.updated_at as string) ?? '',
+          path,
+        })
+      }
+      catch {
+        // skip unreadable or invalid files
+      }
+    }
+    return sessions.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))
+  }
+
+  /** Clear messages and update timestamp; persists to disk. */
+  clear(session: Session): void {
+    session.messages = []
+    session.updatedAt = nowIso()
+    this.save(session)
+  }
+}
+
+export interface SessionListItem {
+  key: string
+  createdAt: string
+  updatedAt: string
+  path: string
 }

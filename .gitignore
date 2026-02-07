@@ -13,3 +13,5 @@ test-project
 **/skills
 !/skills
 !/skills/**
+!/packages/core/src/skills
+!/packages/core/src/skills/**

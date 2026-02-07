@@ -12,12 +12,28 @@ import { dirname, resolve } from 'pathe'
 import { getConfigPath } from '../utils/helpers'
 import { defaultConfig } from './schema'
 
+/**
+ * Migrate old config keys to current schema (align nanobot _migrate_config).
+ * e.g. tools.exec.restrictToWorkspace → tools.restrictToWorkspace
+ */
+export function migrateConfig(data: Record<string, unknown>): Record<string, unknown> {
+  const tools = data.tools as Record<string, unknown> | undefined
+  if (!tools)
+    return data
+  const exec = tools.exec as Record<string, unknown> | undefined
+  if (exec && 'restrictToWorkspace' in exec && !('restrictToWorkspace' in tools)) {
+    tools.restrictToWorkspace = exec.restrictToWorkspace
+    delete exec.restrictToWorkspace
+  }
+  return data
+}
+
 export async function loadConfig(overridePath?: string): Promise<ClawflowConfig> {
   const path = overridePath ?? getConfigPath()
   if (existsSync(path)) {
     try {
       const raw = readFileSync(path, 'utf-8')
-      const data = JSON.parse(raw) as ClawflowConfig
+      const data = migrateConfig(JSON.parse(raw) as Record<string, unknown>) as ClawflowConfig
       return defu(data, defaultConfig) as ClawflowConfig
     }
     catch (e) {

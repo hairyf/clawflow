@@ -153,6 +153,7 @@ export class AgentLoop {
       currentMessage: msg.content,
       channel: msg.channel,
       chatId: msg.chatId,
+      media: msg.media ?? undefined,
     })
     const messagesMutable: Array<Record<string, unknown>> = messages.map(m => ({ ...m }))
     let finalContent: string | null = null
@@ -201,6 +202,7 @@ export class AgentLoop {
       currentMessage: msg.content,
       channel: originChannel,
       chatId: originChatId,
+      media: msg.media ?? undefined,
     })
     const messagesMutable: Array<Record<string, unknown>> = messages.map(m => ({ ...m }))
     let finalContent: string | null = null
