@@ -1,0 +1,3 @@
+[submodule "sources/nanobot"]
+	path = sources/nanobot
+	url = https://github.com/HKUDS/nanobot

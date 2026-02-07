@@ -6,15 +6,12 @@
   ],
   "skills": {
     "hairyf/skills": [
-      "arch-tsdown-cli",
-      "arch-tsdown-monorepo",
-      "create-skill",
-      "create-skill-from-repo",
       "unjs",
-      "vitest"
+      "vitest",
+      "pnpm"
     ],
-    "./": [
-      "agent-flow"
+    "vieko/bonfire": [
+      "bonfire"
     ]
   }
 }
