@@ -8,7 +8,7 @@ linear: false
 # Session Context: clawflow
 
 **Date**: 2025-02-07
-**Status**: Open
+**Status**: Closed
 **Branch**: main
 
 ---
@@ -25,7 +25,8 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
-- **2025-02-07** (本会话): 实现 **gateway 命令**（gateway/index.ts、CLI `clawflow gateway start`）；启动 channels + heartbeat + cron + agent 的网关模式；任务 5 完成。
+- **2025-02-07** (本会话): **AI SDK 与 Provider 对齐** — 更新 ai/@ai-sdk/* 至最新版本；重构 ai-sdk.ts（去除 any、正确类型、ModelMessage 转换）；对齐 nanobot：config 新增 zhipu、moonshot，loader 路由与回退顺序；ai-sdk 支持 Zhipu（zhipu-ai-provider）、Moonshot（createOpenAI + apiBase）、kimi-k2.5 强制 temperature=1.0；移除冗余 openai.ts；关闭 ESLint explicit-function-return-type。
+- **2025-02-07**: 实现 **gateway 命令**（gateway/index.ts、CLI `clawflow gateway start`）；启动 channels + heartbeat + cron + agent 的网关模式；任务 5 完成。
 - **2025-02-07**: Bonfire start → 实现 **bridge/**（BridgeServer、crossws、Baileys、config.bridge、CLI `clawflow bridge start`）；任务 4 完成。Session ended: 健康检查通过，无断链或孤立 spec/doc。
 - **2025-02-07**: 实现 **heartbeat/**（HeartbeatService、config.heartbeat）、**providers/transcription**（GroqTranscriptionProvider、Telegram 语音转写）；任务 2、3 完成
 - **2025-02-07**: 实现 **channels/** 模块：base、manager、telegram、discord、feishu、whatsapp；config schema 增加 channels/gateway；CLI 增加 `channels status`
@@ -55,11 +56,11 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 11. [x] **getApiKey** - 按 model 选择 provider（已实现 matchProviderByModel）
 12. [x] **getApiBase** - 按 model 返回 apiBase
 13. [x] **AI SDK 多 provider** - 已用 ai、@ai-sdk/*、@openrouter/ai-sdk-provider 实现
-14. [ ] **config schema** - 可选：zhipu、moonshot、deleteAfterRun（cron add）
+14. [x] **config schema** - zhipu、moonshot 已对齐 nanobot
 
 ### 五、架构差异（可选）
-14. [x] **多 provider 路由** - LiteLLM 风格或增强现有 loader
-15. [ ] **Bedrock 支持** - 若有需求
+15. [x] **多 provider 路由** - LiteLLM 风格或增强现有 loader
+16. [ ] **Bedrock 支持** - 若有需求
 
 ---
 
@@ -90,7 +91,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 - `packages/core/src/heartbeat/` - 定时读 HEARTBEAT.md 唤醒 agent（HeartbeatService）
 - `packages/core/src/bridge/` - WhatsApp WebSocket 桥接（crossws + Baileys）
 - `packages/core/src/tools/` - 工具注册、cron、filesystem、message、shell、spawn、web
-- `packages/core/src/providers/` - LLM 提供方（base、openai）、语音转写（transcription / Groq）
+- `packages/core/src/providers/` - LLM 提供方（ai-sdk 多 provider）、语音转写（transcription / Groq）
 - `packages/core/src/cron/` - 定时任务服务
 - `packages/core/src/session/` - 会话管理
 - `packages/core/src/config/` - 配置加载与 schema
