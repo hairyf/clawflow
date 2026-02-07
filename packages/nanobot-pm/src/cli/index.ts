@@ -4,7 +4,7 @@
 
 import type { CronSchedule } from '../cron/types'
 import process from 'node:process'
-import { intro, outro } from '@clack/prompts'
+import { confirm, isCancel } from '@clack/prompts'
 import { defineCommand, runMain } from 'citty'
 import { consola } from 'consola'
 import { AgentLoop } from '../agent/loop'
@@ -43,16 +43,52 @@ const main = defineCommand({
         const workspace = get_workspace_path()
         if (existsSync(configPath)) {
           consola.warn(`Config already exists at ${configPath}`)
+          const overwrite = await confirm({ message: 'Overwrite?' })
+          if (isCancel(overwrite) || !overwrite) {
+            process.exit(0)
+          }
         }
-        else {
-          save_config(defaultConfig as any)
-          consola.success(`Created config at ${configPath}`)
-        }
-        consola.success(`Workspace at ${workspace}`)
+        save_config(defaultConfig as any)
+        consola.success(`Created config at ${configPath}`)
+        consola.success(`Created workspace at ${workspace}`)
         const templates: Record<string, string> = {
-          'AGENTS.md': '# Agent Instructions\n\nYou are a helpful AI assistant. Be concise and accurate.',
-          'SOUL.md': '# Soul\n\nI am Nanobot PM, a lightweight AI assistant.',
-          'USER.md': '# User\n\nUser preferences go here.',
+          'AGENTS.md': `# Agent Instructions
+
+You are a helpful AI assistant. Be concise, accurate, and friendly.
+
+## Guidelines
+
+- Always explain what you're doing before taking actions
+- Ask for clarification when the request is ambiguous
+- Use tools to help accomplish tasks
+- Remember important information in your memory files
+`,
+          'SOUL.md': `# Soul
+
+I am Nanobot PM, a lightweight AI assistant.
+
+## Personality
+
+- Helpful and friendly
+- Concise and to the point
+- Curious and eager to learn
+
+## Values
+
+- Accuracy over speed
+- User privacy and safety
+- Transparency in actions
+`,
+          'USER.md': `# User
+
+Information about the user goes here.
+
+## Preferences
+
+- Communication style: (casual/formal)
+- Timezone: (your timezone)
+- Language: (your preferred language)
+`,
         }
         for (const [name, content] of Object.entries(templates)) {
           const path = `${workspace}/${name}`
@@ -65,11 +101,30 @@ const main = defineCommand({
         mkdirSync(memory_dir, { recursive: true })
         const memory_file = `${memory_dir}/MEMORY.md`
         if (!existsSync(memory_file)) {
-          writeFileSync(memory_file, '# Long-term Memory\n\n(Important facts and preferences)\n', 'utf-8')
+          writeFileSync(memory_file, `# Long-term Memory
+
+This file stores important information that should persist across sessions.
+
+## User Information
+
+(Important facts about the user)
+
+## Preferences
+
+(User preferences learned over time)
+
+## Important Notes
+
+(Things to remember)
+`, 'utf-8')
           consola.log('  Created memory/MEMORY.md')
         }
-        consola.success(`${LOGO} Nanobot PM is ready!`)
-        consola.info('Next: add API key to ~/.nanobot-pm/config.json, then run: nanobot-pm agent -m "Hello!"')
+        consola.success(`\n${LOGO} Nanobot PM is ready!`)
+        consola.log('\nNext steps:')
+        consola.log('  1. Add your API key to ~/.nanobot-pm/config.json')
+        consola.log('     Get one at: https://openrouter.ai/keys')
+        consola.log('  2. Chat: nanobot-pm agent -m "Hello!"')
+        consola.log('\nWant Telegram/WhatsApp? See: https://github.com/hairyf/nanobot-pm#-chat-apps')
       },
     }),
     agent: defineCommand({
@@ -80,13 +135,14 @@ const main = defineCommand({
       },
       async run({ args }) {
         const config = await load_config()
+        const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
         const apiKey = get_api_key(config)
-        if (!apiKey) {
+        const is_bedrock = model.startsWith('bedrock/')
+        if (!apiKey && !is_bedrock) {
           consola.error('No API key configured. Set providers.openrouter.apiKey in ~/.nanobot-pm/config.json')
           process.exit(1)
         }
         const workspace = get_workspace_path_from_config(config)
-        const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
         const provider = create_ai_sdk_provider({ config, defaultModel: model })
         const bus = new MessageBus()
         const subagent = new SubagentManager({
@@ -117,6 +173,7 @@ const main = defineCommand({
           consola.log(`${LOGO} Interactive mode (Ctrl+C to exit)\n`)
           const readline = await import('node:readline/promises')
           const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+          rl.on('close', () => consola.log('\nGoodbye!'))
           for (;;) {
             const line = await rl.question('You: ')
             if (!line?.trim())
@@ -134,13 +191,20 @@ const main = defineCommand({
         const config = await load_config()
         const workspace = get_workspace_path_from_config(config)
         const { existsSync } = await import('node:fs')
-        intro(`${LOGO} Nanobot PM Status`)
+        consola.log(`${LOGO} Nanobot PM Status\n`)
         consola.log(`Config: ${configPath} ${existsSync(configPath) ? '✓' : '✗'}`)
         consola.log(`Workspace: ${workspace} ${existsSync(workspace) ? '✓' : '✗'}`)
-        consola.log(`Model: ${config.agents?.defaults?.model ?? 'default'}`)
-        const key = get_api_key(config)
-        consola.log(`API key: ${key ? '✓' : 'not set'}`)
-        outro('Done')
+        if (existsSync(configPath)) {
+          consola.log(`Model: ${config.agents?.defaults?.model ?? 'default'}`)
+          const p = config.providers ?? {}
+          const has = (x?: { apiKey?: string }) => !!x?.apiKey
+          consola.log(`OpenRouter API: ${has(p.openrouter) ? '✓' : 'not set'}`)
+          consola.log(`Anthropic API: ${has(p.anthropic) ? '✓' : 'not set'}`)
+          consola.log(`OpenAI API: ${has(p.openai) ? '✓' : 'not set'}`)
+          consola.log(`Gemini API: ${has(p.gemini) ? '✓' : 'not set'}`)
+          const vllm = p.vllm as { apiBase?: string } | undefined
+          consola.log(`vLLM/Local: ${vllm?.apiBase ? `✓ ${vllm.apiBase}` : 'not set'}`)
+        }
       },
     }),
     channels: defineCommand({
@@ -149,22 +213,19 @@ const main = defineCommand({
         status: defineCommand({
           meta: { description: 'Show channel status (from config)' },
           async run() {
-            intro(`${LOGO} Channels`)
             const config = await load_config()
             const ch = config.channels ?? {}
-            const rows: [string, boolean][] = [
-              ['telegram', ch.telegram?.enabled ?? false],
-              ['discord', ch.discord?.enabled ?? false],
-              ['feishu', ch.feishu?.enabled ?? false],
-              ['whatsapp', ch.whatsapp?.enabled ?? false],
-            ]
-            consola.log('Channel    Enabled (in config)')
-            for (const [name, on] of rows) {
-              consola.log(`${name.padEnd(10)} ${on ? '✓' : '—'}`)
-            }
-            if (!rows.some(([, on]) => on))
+            const wa = ch.whatsapp ?? {}
+            const dc = ch.discord ?? {}
+            const tg = ch.telegram ?? {}
+            const tgConfig = tg.token ? `token: ${tg.token.slice(0, 10)}...` : 'not configured'
+            consola.log('Channel Status')
+            consola.log('Channel    Enabled  Configuration')
+            consola.log(`WhatsApp   ${wa.enabled ? '✓' : '✗'}         ${wa.bridgeUrl ?? 'not set'}`)
+            consola.log(`Discord    ${dc.enabled ? '✓' : '✗'}         ${dc.gatewayUrl ?? 'not set'}`)
+            consola.log(`Telegram   ${tg.enabled ? '✓' : '✗'}         ${tgConfig}`)
+            if (!ch.telegram?.enabled && !ch.discord?.enabled && !ch.feishu?.enabled && !ch.whatsapp?.enabled)
               consola.info('Enable in config: channels.telegram.enabled, etc.')
-            outro('Done')
           },
         }),
         login: defineCommand({
@@ -218,8 +279,11 @@ const main = defineCommand({
           meta: { description: 'Start the gateway' },
           args: {
             port: { type: 'string', alias: 'p', description: 'Gateway port (for future HTTP API)' },
+            verbose: { type: 'boolean', alias: 'v', default: false, description: 'Verbose output' },
           },
           async run({ args }) {
+            if (args.verbose && typeof (consola as any).level !== 'undefined')
+              (consola as any).level = 5
             const config = await load_config()
             const port = args.port ? Number(args.port) : config.gateway?.port ?? 18790
             consola.info(`${LOGO} Starting gateway on port ${port}...`)
@@ -240,20 +304,28 @@ const main = defineCommand({
       subCommands: {
         list: defineCommand({
           meta: { description: 'List jobs' },
-          async run() {
+          args: {
+            all: { type: 'boolean', alias: 'a', default: false, description: 'Include disabled jobs' },
+          },
+          async run({ args }) {
             const service = new CronService(get_cron_store_path())
-            const jobs = service.list_jobs(true)
+            const jobs = service.list_jobs(args.all ?? false)
             if (jobs.length === 0) {
               consola.log('No scheduled jobs.')
               return
             }
+            consola.log('Scheduled Jobs')
+            consola.log('ID          Name    Schedule      Status    Next Run')
             for (const j of jobs) {
               const sched = j.schedule.kind === 'every'
                 ? `every ${(j.schedule.every_ms ?? 0) / 1000}s`
                 : j.schedule.kind === 'cron'
                   ? (j.schedule.expr ?? '')
-                  : 'at'
-              consola.log(`- ${j.name} (id: ${j.id}) ${sched} ${j.enabled ? 'enabled' : 'disabled'}`)
+                  : 'one-time'
+              const d = j.state?.next_run_at_ms ? new Date(j.state.next_run_at_ms) : null
+              const nextRun = d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : ''
+              const status = j.enabled ? 'enabled' : 'disabled'
+              consola.log(`${j.id.padEnd(11)} ${j.name.padEnd(6)} ${sched.padEnd(13)} ${status.padEnd(9)} ${nextRun}`)
             }
           },
         }),
@@ -311,7 +383,7 @@ const main = defineCommand({
             }
             const service = new CronService(get_cron_store_path())
             if (service.removeJob(id))
-              consola.success(`Removed ${id}`)
+              consola.success(`Removed job ${id}`)
             else
               consola.error(`Job ${id} not found`)
           },

@@ -23,13 +23,14 @@ export interface GatewayController {
 }
 
 export async function start_gateway(config: NanobotPmConfig): Promise<GatewayController> {
+  const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
   const apiKey = get_api_key(config)
-  if (!apiKey) {
+  const is_bedrock = model.startsWith('bedrock/')
+  if (!apiKey && !is_bedrock) {
     throw new Error('No API key configured. Set providers.openrouter.apiKey in ~/.nanobot-pm/config.json')
   }
 
   const workspace = get_workspace_path_from_config(config)
-  const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
   const heartbeatConfig = config.heartbeat ?? { enabled: true, intervalS: 30 * 60 }
 
   const bus = new MessageBus()
