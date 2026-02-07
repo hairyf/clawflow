@@ -1,9 +1,0 @@
-[submodule "sources/agent-flow"]
-	path = sources/agent-flow
-	url = https://github.com/whrit/agent-flow.git
-[submodule "sources/claude-flow"]
-	path = sources/claude-flow
-	url = https://github.com/ruvnet/claude-flow
-[submodule "sources/openclaw"]
-	path = sources/openclaw
-	url = https://github.com/openclaw/openclaw

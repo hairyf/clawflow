@@ -141,6 +141,8 @@ importers:
         specifier: catalog:testing
         version: 2.8.2
 
+  playground: {}
+
 packages:
 
   '@antfu/eslint-config@6.7.3':

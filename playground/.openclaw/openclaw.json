@@ -1,8 +1,0 @@
-{
-  "$include": "~/.openclaw/openclaw.json",
-  "agents": {
-    "defaults": {
-      "workspace": "D:\\clawflow\\playground\\src"
-    }
-  }
-}
