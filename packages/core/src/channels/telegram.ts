@@ -1,16 +1,37 @@
 /**
  * Telegram channel: Bot API long polling (getUpdates).
  * No extra SDK; uses fetch for getUpdates + sendMessage.
+ * Voice/audio messages are transcribed via Groq Whisper when configured.
  * @see sources/nanobot/nanobot/channels/telegram.py
  */
 
 import type { OutboundMessage } from '../bus/events'
 import type { MessageBus } from '../bus/queue'
 import type { TelegramChannelConfig } from '../config/schema'
+import type { TranscriptionProvider } from '../providers/transcription'
+import { Buffer } from 'node:buffer'
+import { existsSync, unlinkSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { consola } from 'consola'
+import { join } from 'pathe'
+import { GroqTranscriptionProvider } from '../providers/transcription'
 import { BaseChannel } from './base'
 
 const TELEGRAM_API = 'https://api.telegram.org'
+
+function extensionForMedia(mediaType: string, mimeType?: string): string {
+  if (mimeType) {
+    const map: Record<string, string> = {
+      'audio/ogg': '.ogg',
+      'audio/mpeg': '.mp3',
+      'audio/mp4': '.m4a',
+    }
+    if (map[mimeType])
+      return map[mimeType]
+  }
+  const typeMap: Record<string, string> = { voice: '.ogg', audio: '.mp3' }
+  return typeMap[mediaType] ?? '.ogg'
+}
 
 function markdownToTelegramHtml(text: string): string {
   if (!text)
@@ -27,14 +48,14 @@ function markdownToTelegramHtml(text: string): string {
 export class TelegramChannel extends BaseChannel {
   name = 'telegram'
   protected override config: TelegramChannelConfig
-  private groqApiKey: string
+  private transcriber: TranscriptionProvider | null
   private _offset = 0
   private _abort: AbortController | null = null
 
   constructor(config: TelegramChannelConfig, bus: MessageBus, groqApiKey = '') {
     super(config, bus)
     this.config = config
-    this.groqApiKey = groqApiKey
+    this.transcriber = groqApiKey ? new GroqTranscriptionProvider({ apiKey: groqApiKey }) : null
   }
 
   private apiUrl(path: string): string {
@@ -94,8 +115,21 @@ export class TelegramChannel extends BaseChannel {
       return
 
     const senderId = from?.username ? `${userId}|${from.username}` : String(userId)
-    const text = (msg.text as string) ?? (msg.caption as string) ?? ''
-    const content = text || '[empty message]'
+    let content = (msg.text as string) ?? (msg.caption as string) ?? ''
+
+    const voice = msg.voice as { file_id?: string, mime_type?: string } | undefined
+    const audio = msg.audio as { file_id?: string, mime_type?: string } | undefined
+    const media = voice ?? audio
+    if (media?.file_id) {
+      const transcribed = await this._downloadAndTranscribe(media.file_id, voice ? 'voice' : 'audio', media.mime_type)
+      if (transcribed)
+        content = content ? `${content}\n[transcription: ${transcribed}]` : `[transcription: ${transcribed}]`
+      else
+        content = content || `[${voice ? 'voice' : 'audio'}: download/transcribe failed]`
+    }
+
+    if (!content)
+      content = '[empty message]'
 
     await this.handleMessage(
       senderId,
@@ -110,6 +144,48 @@ export class TelegramChannel extends BaseChannel {
         isGroup: chat?.type !== 'private',
       },
     )
+  }
+
+  private async _downloadAndTranscribe(fileId: string, mediaType: string, mimeType?: string): Promise<string> {
+    const token = this.config.token
+    if (!token)
+      return ''
+    try {
+      const getRes = await fetch(this.apiUrl('/getFile'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file_id: fileId }),
+      })
+      const getData = await getRes.json() as { ok?: boolean, result?: { file_path?: string } }
+      if (!getData.ok || !getData.result?.file_path)
+        return ''
+      const filePath = getData.result.file_path
+      const downloadUrl = `${TELEGRAM_API}/file/bot${token}/${filePath}`
+      const res = await fetch(downloadUrl, { signal: this._abort?.signal })
+      if (!res.ok || !res.body)
+        return ''
+      const buf = Buffer.from(await res.arrayBuffer())
+      const ext = extensionForMedia(mediaType, mimeType)
+      const localPath = join(tmpdir(), `clawflow_${fileId.slice(0, 16)}${ext}`)
+      writeFileSync(localPath, buf)
+      try {
+        if (this.transcriber) {
+          const text = await this.transcriber.transcribe(localPath)
+          if (text)
+            consola.info(`Transcribed ${mediaType}: ${text.slice(0, 50)}...`)
+          return text
+        }
+        return ''
+      }
+      finally {
+        if (existsSync(localPath))
+          unlinkSync(localPath)
+      }
+    }
+    catch (e) {
+      consola.warn('Telegram voice/audio download or transcribe failed:', e)
+      return ''
+    }
   }
 
   async stop(): Promise<void> {
