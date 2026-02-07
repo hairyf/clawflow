@@ -8,7 +8,7 @@ linear: false
 # Session Context: clawflow
 
 **Date**: 2025-02-07
-**Status**: Active
+**Status**: Closed
 **Branch**: main
 
 ---
@@ -25,9 +25,8 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
-- **2025-02-07**: 实现 **providers/transcription**：GroqTranscriptionProvider（Whisper API、transcribe(filePath)）；Telegram 语音/音频消息下载 + 转写后送入 agent；导出自 core
-- **2025-02-07**: 实现 **heartbeat/**：HeartbeatService（定时读 workspace/HEARTBEAT.md、onHeartbeat 回调、triggerNow）；config 增加 heartbeat.enabled / heartbeat.intervalS；导出自 core
-- **2025-02-07**: 实现 **channels/** 模块：base、manager、telegram、discord、feishu、whatsapp；config schema 增加 channels/gateway；CLI 增加 `channels status`（@clack/prompts intro/outro）
+- **2025-02-07** (本会话): Bonfire start → 实现 **heartbeat/**（HeartbeatService、config.heartbeat）、**providers/transcription**（GroqTranscriptionProvider、Telegram 语音转写）；任务 2、3 完成
+- **2025-02-07**: 实现 **channels/** 模块：base、manager、telegram、discord、feishu、whatsapp；config schema 增加 channels/gateway；CLI 增加 `channels status`
 - **2025-02-07**: Bonfire start；完成 nanobot vs clawflow 模块对比，整理未实现模块与实现差异清单，作为待办记入 Next Priorities
 
 ---
