@@ -8,7 +8,7 @@ linear: false
 # Session Context: nanobot-pm
 
 **Date**: 2025-02-07
-**Status**: Active
+**Status**: Ended
 **Branch**: main
 
 ---
@@ -25,7 +25,8 @@ nanobot-pm 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架�
 
 ## Recent Sessions
 
-- **2025-02-07** (本会话): **项目重命名为 nanobot-pm** — 包名与 CLI：clawflow → nanobot-pm（根包 nanobot-pm-monorepo，核心包 nanobot-pm，bin nanobot-pm）；类型 ClawflowConfig → NanobotPmConfig；数据目录 ~/.clawflow → ~/.nanobot-pm；用户面向文案与品牌改为 Nanobot PM；更新 package.json、AGENTS.md、.bonfire、specs、测试注释与临时目录前缀；pnpm install / test / build 通过。
+- **2025-02-07** (本会话): **CLI 与 nanobot 源码对齐** — onboard：模板（AGENTS/SOUL/USER、MEMORY）与 nanobot 一致，config 覆盖确认（@clack confirm）、Next steps 分步输出；agent：Bedrock 免 API key、交互模式 Ctrl+C 输出 Goodbye!；status：详细 API（OpenRouter/Anthropic/OpenAI/Gemini/vLLM）；channels status：Configuration 列（bridgeUrl、gatewayUrl、token 脱敏）；cron list：--all 默认排除 disabled、表格 + Next Run；cron remove：Removed job {id}；gateway：--verbose、Bedrock 检查。test/build 通过。
+- **2025-02-07**: **项目重命名为 nanobot-pm** — 包名与 CLI：clawflow → nanobot-pm（根包 nanobot-pm-monorepo，核心包 nanobot-pm，bin nanobot-pm）；类型 ClawflowConfig → NanobotPmConfig；数据目录 ~/.clawflow → ~/.nanobot-pm；用户面向文案与品牌改为 Nanobot PM；更新 package.json、AGENTS.md、.bonfire、specs、测试注释与临时目录前缀；pnpm install / test / build 通过。
 - **2025-02-07**: **snake_case 命名统一 + 文件命名对齐 + AGENTS.md 约束** — 创建 `scripts/snake-case-rename.mjs` 批量重命名 591 处（方法/函数/属性）为 snake_case；`cron-tool.ts` → `cron.ts`、`cron-tool.test.ts` → `cron.test.ts` 与 nanobot 对齐；新增 `.bonfire/specs/snake-case-rename-map.md`、`code-file-naming-diff.md`；根目录 AGENTS.md 增加 AI 约束（naming、file structure、syncing with nanobot）；修复 gateway 中 `../heartbeat/service` → `../heartbeat`。
 - **2025-02-07**: **packages/nanobot-pm test/ nanobot a/b 对照单元测试** — 新建 `test/` 目录，vitest 包含 `test/**/*.test.ts`；新增 base、registry、helpers、bus/events、bus/queue、agent/context、memory、skills、session、cron、config、subagent、tools（filesystem、cron-tool、message、shell、web）共 19 个测试文件、114 用例；shell/web 使用 vi.mock/vi.hoisted 模拟 exec、ofetch；loader getApiKey/getApiBase 对齐 nanobot _match_provider；SessionManager 增加 `sessionsDir` 可选参数便于测试；覆盖率 72% → 84%（shell 100%、web 96%）。
 - **2025-02-07**: **nanobot 对照精简与 get_running_count** — 删除 `nanobot-vs-clawflow-verification.md`、`skills-module-verification.md`；新增 `code-file-mapping.md`、`code-file-diff.md`；修复 loop chat_id 解析；实现 `SubagentManager.getRunningCount()`。
@@ -94,8 +95,11 @@ nanobot-pm 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架�
 28. [x] **文件命名** — agent/tools/cron.ts（与 nanobot cron.py 对齐）
 29. [x] **AGENTS.md** — 根目录 AI 约束（naming、file structure、syncing、verification）
 
-### 九、项目重命名（本会话完成）
+### 九、项目重命名
 30. [x] **nanobot-pm** — 包名/CLI/类型/数据目录/品牌与文档已从 clawflow 全部切换；test/build 通过。
+
+### 十、CLI 与 nanobot 对照（本会话完成）
+31. [x] **onboard / agent / status / channels / cron / gateway** — 模板、覆盖确认、Bedrock、输出格式与 nanobot commands.py 对齐。
 
 **可选后续**：若 GitHub 仓库仍为 `clawflow`，可在 GitHub 上重命名为 `nanobot-pm`，或把 `package.json` 中 homepage/repository/bugs URL 改回 `hairyf/clawflow`。
 
