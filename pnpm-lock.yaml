@@ -40,9 +40,30 @@ catalogs:
       specifier: ^7.2.7
       version: 7.3.1
   default:
-    commander:
-      specifier: ^12.1.0
-      version: 12.1.0
+    c12:
+      specifier: ^3.3.0
+      version: 3.3.3
+    citty:
+      specifier: ^0.2.0
+      version: 0.2.0
+    consola:
+      specifier: ^3.2.3
+      version: 3.4.2
+    cron-parser:
+      specifier: ^4.9.0
+      version: 4.9.0
+    defu:
+      specifier: ^6.1.4
+      version: 6.1.4
+    destr:
+      specifier: ^2.0.2
+      version: 2.0.5
+    ofetch:
+      specifier: ^1.5.0
+      version: 1.5.1
+    pathe:
+      specifier: ^2.0.0
+      version: 2.0.3
   inlined:
     '@antfu/utils':
       specifier: ^9.3.0
@@ -139,9 +160,30 @@ importers:
 
   packages/core:
     dependencies:
-      commander:
+      c12:
         specifier: 'catalog:'
-        version: 12.1.0
+        version: 3.3.3
+      citty:
+        specifier: 'catalog:'
+        version: 0.2.0
+      consola:
+        specifier: 'catalog:'
+        version: 3.4.2
+      cron-parser:
+        specifier: 'catalog:'
+        version: 4.9.0
+      defu:
+        specifier: 'catalog:'
+        version: 6.1.4
+      destr:
+        specifier: 'catalog:'
+        version: 2.0.5
+      ofetch:
+        specifier: 'catalog:'
+        version: 1.5.1
+      pathe:
+        specifier: 'catalog:'
+        version: 2.0.3
     devDependencies:
       '@types/node':
         specifier: catalog:types
@@ -1158,10 +1200,6 @@ packages:
   colorette@2.0.20:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
 
-  commander@12.1.0:
-    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
-    engines: {node: '>=18'}
-
   commander@14.0.2:
     resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
     engines: {node: '>=20'}
@@ -1189,6 +1227,10 @@ packages:
 
   core-js-compat@3.47.0:
     resolution: {integrity: sha512-IGfuznZ/n7Kp9+nypamBhvwdwLsW6KC8IOaURw2doAK5e98AG3acVLdh0woOnEqCfUtS+Vu882JE4k/DAm3ItQ==}
+
+  cron-parser@4.9.0:
+    resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
+    engines: {node: '>=12.0.0'}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -1734,6 +1776,10 @@ packages:
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
 
+  luxon@3.7.2:
+    resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
+    engines: {node: '>=12'}
+
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -1923,6 +1969,9 @@ packages:
 
   obug@2.1.1:
     resolution: {integrity: sha512-uTqF9MuPraAQ+IsnPf366RG4cP9RtUi7MLO1N3KEc+wb0a6yKpeL0lmk2IB1jY5KHPAlTc6T/JRdC/YqxHNwkQ==}
+
+  ofetch@1.5.1:
+    resolution: {integrity: sha512-2W4oUZlVaqAPAil6FUg/difl6YhqhUR7x2eZY4bQCko22UXg3hptq9KLQdqFClV+Wu85UX7hNtdGTngi/1BxcA==}
 
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
@@ -3312,8 +3361,6 @@ snapshots:
 
   colorette@2.0.20: {}
 
-  commander@12.1.0: {}
-
   commander@14.0.2: {}
 
   comment-parser@1.4.1: {}
@@ -3331,6 +3378,10 @@ snapshots:
   core-js-compat@3.47.0:
     dependencies:
       browserslist: 4.28.1
+
+  cron-parser@4.9.0:
+    dependencies:
+      luxon: 3.7.2
 
   cross-spawn@7.0.6:
     dependencies:
@@ -3912,6 +3963,8 @@ snapshots:
 
   longest-streak@3.1.0: {}
 
+  luxon@3.7.2: {}
+
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -4280,6 +4333,12 @@ snapshots:
   object-deep-merge@2.0.0: {}
 
   obug@2.1.1: {}
+
+  ofetch@1.5.1:
+    dependencies:
+      destr: 2.0.5
+      node-fetch-native: 1.6.7
+      ufo: 1.6.3
 
   ohash@2.0.11: {}
 

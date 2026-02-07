@@ -38,6 +38,12 @@ Usage notes:
 <location>global</location>
 </skill>
 
+<skill>
+<name>nanobot</name>
+<description>Ultra-lightweight personal AI assistant (nanobot). Use when implementing or comparing agent loop, message bus, tools, cron, channels, or cloning nanobot-style architecture.</description>
+<location>project</location>
+</skill>
+
 </available_skills>
 <!-- SKILLS_TABLE_END -->
 

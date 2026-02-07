@@ -40,7 +40,14 @@
     }
   },
   "dependencies": {
-    "commander": "catalog:"
+    "c12": "catalog:",
+    "citty": "catalog:",
+    "consola": "catalog:",
+    "cron-parser": "catalog:",
+    "defu": "catalog:",
+    "destr": "catalog:",
+    "ofetch": "catalog:",
+    "pathe": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:types",

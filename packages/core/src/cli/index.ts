@@ -1,5 +1,216 @@
+/**
+ * ClawFlow CLI (citty). Commands: onboard, agent, status, cron.
+ */
+
+import type { CronSchedule } from '../cron/types.js'
+import { defineCommand, runMain } from 'citty'
+import { consola } from 'consola'
+import { AgentLoop } from '../agent/loop.js'
+import { SubagentManager } from '../agent/subagent.js'
+import { MessageBus } from '../bus/queue.js'
+import { getApiBase, getApiKey, getWorkspacePathFromConfig, loadConfig, saveConfig } from '../config/loader.js'
+import { defaultConfig } from '../config/schema.js'
+import { CronService } from '../cron/service.js'
+import { createOpenAIProvider } from '../providers/openai.js'
+import { getConfigPath, getCronStorePath, getWorkspacePath } from '../utils/helpers.js'
+
+const LOGO = '🐈'
+
+const main = defineCommand({
+  meta: {
+    name: 'clawflow',
+    description: `${LOGO} ClawFlow - Personal AI Assistant`,
+    version: '0.0.0',
+  },
+  args: {
+    version: {
+      type: 'boolean',
+      alias: 'v',
+      description: 'Show version',
+    },
+  },
+  subCommands: {
+    onboard: defineCommand({
+      meta: { description: 'Initialize config and workspace' },
+      async run() {
+        const configPath = getConfigPath()
+        const { existsSync, writeFileSync } = await import('node:fs')
+        const { mkdirSync } = await import('node:fs')
+        const workspace = getWorkspacePath()
+        if (existsSync(configPath)) {
+          consola.warn(`Config already exists at ${configPath}`)
+        }
+        else {
+          saveConfig(defaultConfig as any)
+          consola.success(`Created config at ${configPath}`)
+        }
+        consola.success(`Workspace at ${workspace}`)
+        const templates: Record<string, string> = {
+          'AGENTS.md': '# Agent Instructions\n\nYou are a helpful AI assistant. Be concise and accurate.',
+          'SOUL.md': '# Soul\n\nI am ClawFlow, a lightweight AI assistant.',
+          'USER.md': '# User\n\nUser preferences go here.',
+        }
+        for (const [name, content] of Object.entries(templates)) {
+          const path = `${workspace}/${name}`
+          if (!existsSync(path)) {
+            writeFileSync(path, content, 'utf-8')
+            consola.log(`  Created ${name}`)
+          }
+        }
+        const memoryDir = `${workspace}/memory`
+        mkdirSync(memoryDir, { recursive: true })
+        const memoryFile = `${memoryDir}/MEMORY.md`
+        if (!existsSync(memoryFile)) {
+          writeFileSync(memoryFile, '# Long-term Memory\n\n(Important facts and preferences)\n', 'utf-8')
+          consola.log('  Created memory/MEMORY.md')
+        }
+        consola.success(`${LOGO} ClawFlow is ready!`)
+        consola.info('Next: add API key to ~/.clawflow/config.json, then run: clawflow agent -m "Hello!"')
+      },
+    }),
+    agent: defineCommand({
+      meta: { description: 'Chat with the agent' },
+      args: {
+        message: { type: 'string', alias: 'm', description: 'Message to send' },
+        session: { type: 'string', alias: 's', default: 'cli:default', description: 'Session ID' },
+      },
+      async run({ args }) {
+        const config = await loadConfig()
+        const apiKey = getApiKey(config)
+        const apiBase = getApiBase(config)
+        if (!apiKey) {
+          consola.error('No API key configured. Set providers.openrouter.apiKey in ~/.clawflow/config.json')
+          process.exit(1)
+        }
+        const workspace = getWorkspacePathFromConfig(config)
+        const provider = createOpenAIProvider({
+          apiKey,
+          apiBase,
+          defaultModel: config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4',
+        })
+        const bus = new MessageBus()
+        const subagent = new SubagentManager({
+          provider,
+          workspace,
+          bus,
+          model: config.agents?.defaults?.model,
+          braveApiKey: config.tools?.web?.search?.apiKey,
+          execTimeout: config.tools?.exec?.timeout,
+          restrictToWorkspace: config.tools?.restrictToWorkspace,
+        })
+        const agent = new AgentLoop({
+          bus,
+          provider,
+          workspace,
+          model: config.agents?.defaults?.model,
+          braveApiKey: config.tools?.web?.search?.apiKey,
+          execTimeout: config.tools?.exec?.timeout,
+          restrictToWorkspace: config.tools?.restrictToWorkspace,
+          subagentManager: subagent,
+        })
+        const message = args.message as string | undefined
+        if (message) {
+          const response = await agent.processDirect(message, args.session as string)
+          consola.log(`\n${LOGO} ${response}`)
+        }
+        else {
+          consola.log(`${LOGO} Interactive mode (Ctrl+C to exit)\n`)
+          const readline = await import('node:readline/promises')
+          const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+          for (;;) {
+            const line = await rl.question('You: ')
+            if (!line?.trim())
+              continue
+            const response = await agent.processDirect(line.trim(), args.session as string)
+            consola.log(`\n${LOGO} ${response}\n`)
+          }
+        }
+      },
+    }),
+    status: defineCommand({
+      meta: { description: 'Show status' },
+      async run() {
+        const configPath = getConfigPath()
+        const config = await loadConfig()
+        const workspace = getWorkspacePathFromConfig(config)
+        const { existsSync } = await import('node:fs')
+        consola.log(`${LOGO} ClawFlow Status\n`)
+        consola.log(`Config: ${configPath} ${existsSync(configPath) ? '✓' : '✗'}`)
+        consola.log(`Workspace: ${workspace} ${existsSync(workspace) ? '✓' : '✗'}`)
+        consola.log(`Model: ${config.agents?.defaults?.model ?? 'default'}`)
+        const key = getApiKey(config)
+        consola.log(`API key: ${key ? '✓' : 'not set'}`)
+      },
+    }),
+    cron: defineCommand({
+      meta: { description: 'Scheduled tasks' },
+      subCommands: {
+        list: defineCommand({
+          meta: { description: 'List jobs' },
+          async run() {
+            const service = new CronService(getCronStorePath())
+            const jobs = service.listJobs(true)
+            if (jobs.length === 0) {
+              consola.log('No scheduled jobs.')
+              return
+            }
+            for (const j of jobs) {
+              const sched = j.schedule.kind === 'every'
+                ? `every ${(j.schedule.everyMs ?? 0) / 1000}s`
+                : j.schedule.kind === 'cron'
+                  ? (j.schedule.expr ?? '')
+                  : 'at'
+              consola.log(`- ${j.name} (id: ${j.id}) ${sched} ${j.enabled ? 'enabled' : 'disabled'}`)
+            }
+          },
+        }),
+        add: defineCommand({
+          meta: { description: 'Add job' },
+          args: {
+            name: { type: 'string', alias: 'n', required: true },
+            message: { type: 'string', alias: 'm', required: true },
+            every: { type: 'string', alias: 'e', description: 'Every N seconds' },
+            cron: { type: 'string', alias: 'c', description: 'Cron expression' },
+          },
+          async run({ args }) {
+            let schedule: CronSchedule
+            if (args.every) {
+              schedule = { kind: 'every', everyMs: Number(args.every) * 1000 }
+            }
+            else if (args.cron) {
+              schedule = { kind: 'cron', expr: args.cron }
+            }
+            else {
+              consola.error('Specify --every or --cron')
+              process.exit(1)
+            }
+            const service = new CronService(getCronStorePath())
+            const job = service.addJob(args.name as string, schedule, args.message as string)
+            consola.success(`Added job '${job.name}' (${job.id})`)
+          },
+        }),
+        remove: defineCommand({
+          meta: { description: 'Remove job' },
+          args: { jobId: { type: 'positional', description: 'Job ID' } },
+          async run({ args }) {
+            const id = (args._?.[0] ?? args.jobId) as string
+            if (!id) {
+              consola.error('Usage: clawflow cron remove <job_id>')
+              process.exit(1)
+            }
+            const service = new CronService(getCronStorePath())
+            if (service.removeJob(id))
+              consola.success(`Removed ${id}`)
+            else
+              consola.error(`Job ${id} not found`)
+          },
+        }),
+      },
+    }),
+  },
+})
+
 export function run(): void {
-  console.log('Hello, world!')
-  // Add CLI logic, e.g. commander/yargs
+  runMain(main, { rawArgs: process.argv.slice(2) })
 }
 run()
