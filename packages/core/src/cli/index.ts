@@ -11,11 +11,11 @@ import { AgentLoop } from '../agent/loop'
 import { SubagentManager } from '../agent/subagent'
 import { startBridge } from '../bridge'
 import { MessageBus } from '../bus/queue'
-import { getApiBase, getApiKey, getWorkspacePathFromConfig, loadConfig, saveConfig } from '../config/loader'
+import { getApiKey, getWorkspacePathFromConfig, loadConfig, saveConfig } from '../config/loader'
 import { defaultConfig } from '../config/schema'
 import { CronService } from '../cron/service'
 import { startGateway } from '../gateway'
-import { createOpenAIProvider } from '../providers/openai'
+import { createAISDKProvider } from '../providers/ai-sdk'
 import { getConfigPath, getCronStorePath, getWorkspacePath } from '../utils/helpers'
 
 const LOGO = '🐈'
@@ -81,23 +81,19 @@ const main = defineCommand({
       async run({ args }) {
         const config = await loadConfig()
         const apiKey = getApiKey(config)
-        const apiBase = getApiBase(config)
         if (!apiKey) {
           consola.error('No API key configured. Set providers.openrouter.apiKey in ~/.clawflow/config.json')
           process.exit(1)
         }
         const workspace = getWorkspacePathFromConfig(config)
-        const provider = createOpenAIProvider({
-          apiKey,
-          apiBase,
-          defaultModel: config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4',
-        })
+        const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
+        const provider = createAISDKProvider({ config, defaultModel: model })
         const bus = new MessageBus()
         const subagent = new SubagentManager({
           provider,
           workspace,
           bus,
-          model: config.agents?.defaults?.model,
+          model,
           braveApiKey: config.tools?.web?.search?.apiKey,
           execTimeout: config.tools?.exec?.timeout,
           restrictToWorkspace: config.tools?.restrictToWorkspace,
@@ -106,7 +102,7 @@ const main = defineCommand({
           bus,
           provider,
           workspace,
-          model: config.agents?.defaults?.model,
+          model,
           braveApiKey: config.tools?.web?.search?.apiKey,
           execTimeout: config.tools?.exec?.timeout,
           restrictToWorkspace: config.tools?.restrictToWorkspace,

@@ -10,10 +10,10 @@ import { AgentLoop } from '../agent/loop'
 import { SubagentManager } from '../agent/subagent'
 import { MessageBus } from '../bus/queue'
 import { ChannelManager } from '../channels/manager'
-import { getApiBase, getApiKey, getWorkspacePathFromConfig } from '../config/loader'
+import { getApiKey, getWorkspacePathFromConfig } from '../config/loader'
 import { CronService } from '../cron/service'
 import { HeartbeatService } from '../heartbeat/service'
-import { createOpenAIProvider } from '../providers/openai'
+import { createAISDKProvider } from '../providers/ai-sdk'
 import { getCronStorePath } from '../utils/helpers'
 
 const LOGO = '🐈'
@@ -24,7 +24,6 @@ export interface GatewayController {
 
 export async function startGateway(config: ClawflowConfig): Promise<GatewayController> {
   const apiKey = getApiKey(config)
-  const apiBase = getApiBase(config)
   if (!apiKey) {
     throw new Error('No API key configured. Set providers.openrouter.apiKey in ~/.clawflow/config.json')
   }
@@ -34,11 +33,7 @@ export async function startGateway(config: ClawflowConfig): Promise<GatewayContr
   const heartbeatConfig = config.heartbeat ?? { enabled: true, intervalS: 30 * 60 }
 
   const bus = new MessageBus()
-  const provider = createOpenAIProvider({
-    apiKey,
-    apiBase,
-    defaultModel: model,
-  })
+  const provider = createAISDKProvider({ config, defaultModel: model })
 
   const cronService = new CronService(getCronStorePath())
   const subagent = new SubagentManager({

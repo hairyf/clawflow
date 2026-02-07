@@ -41,8 +41,37 @@ export function getWorkspacePathFromConfig(config: ClawflowConfig): string {
   return resolve(expanded)
 }
 
-/** Get API key (first available provider) */
-export function getApiKey(config: ClawflowConfig, _model?: string): string | undefined {
+/** Match provider by model name (align nanobot config._match_provider) */
+function matchProviderByModel(config: ClawflowConfig, model?: string): { apiKey?: string, apiBase?: string } | undefined {
+  const providers = config.providers ?? {}
+  const m = (model ?? config.agents?.defaults?.model ?? '').toLowerCase()
+  const match = (p: typeof providers.openrouter) => p?.apiKey ? p : undefined
+  if (m.includes('openrouter') || m.includes('/'))
+    return match(providers.openrouter) ?? match(providers.openai)
+  if (m.includes('deepseek'))
+    return match(providers.deepseek)
+  if (m.includes('anthropic') || m.includes('claude'))
+    return match(providers.anthropic)
+  if (m.includes('groq'))
+    return match(providers.groq)
+  if (m.includes('gemini') || m.includes('google'))
+    return match(providers.gemini)
+  if (m.includes('zhipu') || m.includes('glm') || m.includes('zai'))
+    return match(providers.zhipu)
+  if (m.includes('moonshot') || m.includes('kimi'))
+    return match(providers.moonshot)
+  if (m.includes('openai') || m.includes('gpt'))
+    return match(providers.openai) ?? match(providers.openrouter)
+  if (m.includes('vllm'))
+    return providers.vllm?.apiBase ? { apiKey: providers.vllm?.apiKey ?? 'dummy', apiBase: providers.vllm?.apiBase } : undefined
+  return undefined
+}
+
+/** Get API key (first available provider, or by model when specified) */
+export function getApiKey(config: ClawflowConfig, model?: string): string | undefined {
+  const matched = matchProviderByModel(config, model)
+  if (matched?.apiKey)
+    return matched.apiKey
   const providers = config.providers ?? {}
   const order = [
     providers.openrouter,
@@ -50,6 +79,8 @@ export function getApiKey(config: ClawflowConfig, _model?: string): string | und
     providers.anthropic,
     providers.openai,
     providers.gemini,
+    providers.zhipu,
+    providers.moonshot,
     providers.groq,
     providers.vllm,
   ]
@@ -60,12 +91,19 @@ export function getApiKey(config: ClawflowConfig, _model?: string): string | und
   return undefined
 }
 
-/** Get API base for OpenRouter / vLLM etc. */
+/** Get API base for OpenRouter / vLLM etc. (by model) */
 export function getApiBase(config: ClawflowConfig, model?: string): string | undefined {
+  const matched = matchProviderByModel(config, model)
+  if (matched?.apiBase)
+    return matched.apiBase
   const modelLower = (model ?? config.agents?.defaults?.model ?? '').toLowerCase()
-  if (modelLower.includes('openrouter'))
+  if (modelLower.includes('openrouter') || modelLower.includes('/'))
     return config.providers?.openrouter?.apiBase ?? 'https://openrouter.ai/api/v1'
+  if (modelLower.includes('zhipu') || modelLower.includes('glm') || modelLower.includes('zai'))
+    return config.providers?.zhipu?.apiBase
   if (modelLower.includes('vllm'))
     return config.providers?.vllm?.apiBase
+  if (modelLower.includes('moonshot') || modelLower.includes('kimi'))
+    return config.providers?.moonshot?.apiBase ?? 'https://api.moonshot.cn/v1'
   return undefined
 }

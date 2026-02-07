@@ -88,6 +88,8 @@ export interface ClawflowConfig {
     groq?: ProviderConfig
     vllm?: ProviderConfig
     gemini?: ProviderConfig
+    zhipu?: ProviderConfig
+    moonshot?: ProviderConfig
   }
   tools?: ToolsConfig
   channels?: ChannelsConfig

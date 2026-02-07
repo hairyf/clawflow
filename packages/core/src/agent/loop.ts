@@ -161,6 +161,8 @@ export class AgentLoop {
         messages: messagesMutable as unknown as ChatMessage[],
         tools: this.tools.getDefinitions(),
         model: this.model,
+        executeTool: (name, args) => this.tools.execute(name, args),
+        maxIterations: this.maxIterations,
       })
       if (hasToolCalls(res)) {
         this.context.addAssistantMessage(
@@ -207,6 +209,8 @@ export class AgentLoop {
         messages: messagesMutable as unknown as ChatMessage[],
         tools: this.tools.getDefinitions(),
         model: this.model,
+        executeTool: (name, args) => this.tools.execute(name, args),
+        maxIterations: this.maxIterations,
       })
       if (hasToolCalls(res)) {
         this.context.addAssistantMessage(

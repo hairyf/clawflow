@@ -52,12 +52,13 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 10. [ ] **enableJob** - `enableJob(jobId, enabled): CronJob | null`
 
 ### 四、Config / Provider 路由
-11. [ ] **getApiKey** - 按 model 选择 provider（当前忽略 model 参数）
-12. [ ] **getApiBase** - 按 model 返回 apiBase
-13. [ ] **config schema** - 可选：zhipu、moonshot、deleteAfterRun（cron add）
+11. [x] **getApiKey** - 按 model 选择 provider（已实现 matchProviderByModel）
+12. [x] **getApiBase** - 按 model 返回 apiBase
+13. [x] **AI SDK 多 provider** - 已用 ai、@ai-sdk/*、@openrouter/ai-sdk-provider 实现
+14. [ ] **config schema** - 可选：zhipu、moonshot、deleteAfterRun（cron add）
 
 ### 五、架构差异（可选）
-14. [ ] **多 provider 路由** - LiteLLM 风格或增强现有 loader
+14. [x] **多 provider 路由** - LiteLLM 风格或增强现有 loader
 15. [ ] **Bedrock 支持** - 若有需求
 
 ---
