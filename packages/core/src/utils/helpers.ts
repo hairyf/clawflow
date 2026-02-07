@@ -76,10 +76,10 @@ export function truncateString(s: string, maxLen = 100, suffix = '...'): string 
  * @see sources/nanobot/nanobot/utils/helpers.py parse_session_key
  */
 export function parseSessionKey(key: string): [string, string] {
-  const parts = key.split(':', 2)
-  if (parts.length !== 2)
+  const i = key.indexOf(':')
+  if (i < 0)
     throw new Error(`Invalid session key: ${key}`)
-  return [parts[0], parts[1]]
+  return [key.slice(0, i), key.slice(i + 1)]
 }
 
 export function getRuntimeInfo(): string {

@@ -29,6 +29,8 @@ export class SubagentManager {
   private braveApiKey: string
   private execTimeout: number
   private restrictToWorkspace: boolean
+  /** Running subagent task IDs (nanobot _running_tasks). */
+  private runningTasks = new Set<string>()
 
   constructor(options: SubagentManagerOptions) {
     this.provider = options.provider
@@ -40,6 +42,11 @@ export class SubagentManager {
     this.restrictToWorkspace = options.restrictToWorkspace ?? false
   }
 
+  /** Number of currently running subagents (nanobot get_running_count). */
+  getRunningCount(): number {
+    return this.runningTasks.size
+  }
+
   async spawn(
     task: string,
     label: string | undefined,
@@ -48,8 +55,11 @@ export class SubagentManager {
   ): Promise<string> {
     const taskId = Math.random().toString(36).slice(2, 10)
     const displayLabel = label ?? (task.length > 30 ? `${task.slice(0, 30)}...` : task)
+    this.runningTasks.add(taskId)
     setImmediate(() => {
-      this.runSubagent(taskId, task, displayLabel, originChannel, originChatId).catch(() => {})
+      this.runSubagent(taskId, task, displayLabel, originChannel, originChatId).catch(() => {}).finally(() => {
+        this.runningTasks.delete(taskId)
+      })
     })
     return `Subagent [${displayLabel}] started (id: ${taskId}). I'll notify you when it completes.`
   }

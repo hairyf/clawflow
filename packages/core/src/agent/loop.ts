@@ -10,8 +10,9 @@ import type { ChatMessage, LLMProvider, ToolCallRequest } from '../providers/bas
 import type { SubagentManager } from './subagent'
 import { getSessionKey } from '../bus/events'
 import { hasToolCalls } from '../providers/base'
-
 import { SessionManager } from '../session/manager'
+
+import { parseSessionKey } from '../utils/helpers'
 import { ContextBuilder } from './context'
 import { cronTool } from './tools/cron-tool'
 import { editFileTool, listDirTool, readFileTool, writeFileTool } from './tools/filesystem'
@@ -140,9 +141,21 @@ export class AgentLoop {
 
   private async processMessage(msg: InboundMessage): Promise<OutboundMessage | null> {
     if (msg.channel === 'system') {
-      const [originChannel, originChatId] = msg.chatId.includes(':')
-        ? msg.chatId.split(':', 2)
-        : ['cli', msg.chatId]
+      let originChannel: string
+      let originChatId: string
+      if (msg.chatId.includes(':')) {
+        try {
+          [originChannel, originChatId] = parseSessionKey(msg.chatId)
+        }
+        catch {
+          originChannel = 'cli'
+          originChatId = msg.chatId
+        }
+      }
+      else {
+        originChannel = 'cli'
+        originChatId = msg.chatId
+      }
       return this.processSystemMessage(msg, originChannel, originChatId)
     }
     const session = this.sessions.getOrCreate(getSessionKey(msg))

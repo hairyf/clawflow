@@ -8,7 +8,7 @@ linear: false
 # Session Context: clawflow
 
 **Date**: 2025-02-07
-**Status**: Ended
+**Status**: Started
 **Branch**: main
 
 ---
@@ -25,6 +25,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
+- **2025-02-07** (本会话): **Skills 核查与单元测试** — 写 `.bonfire/specs/skills-module-verification.md`（nanobot 如何把 skills 传给 AI、我们有没有做/在哪里做/怎么验证）；按你要求改为单元测试验证：`packages/core/src/agent/context.test.ts` 三用例（Active Skills、Skills 摘要、buildMessages 首条为 system 且含 skills），`ContextBuilder` 支持可选 `skills?: SkillsLoader` 注入，`vitest.config.ts`、tsdown 排除 `*.test.ts`，spec 中验证方式改为 `pnpm test -- --run`。
 - **2025-02-07**: **任务 19 Skills + 打包携带 skills** — SkillsLoader：builtin 目录、getSkillMetadata/stripFrontmatter/checkRequirements、getAlwaysSkills、loadSkillsForContext；utils 增加 getSkillsPath；build 时 `scripts/copy-skills.mjs` 将 repo `skills/` 复制到 `dist/skills`，打包携带 builtin skills。
 - **2025-02-07**: **任务 21 Tool 校验与 registry** — 实现 `validateToolParams`（base.ts，按 JSON Schema 校验）、Tool 可选 `validateParams`、registry execute 前校验、`unregister`/`has`/`toolNames`。
 - **2025-02-07**: **任务 22 Session API** — 实现 `SessionManager.delete(key)`、`listSessions()`、`clear(session)` 与 `SessionListItem`；与 nanobot session 对齐。
@@ -87,6 +88,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 **Code References**:
 - nanobot 对照清单: `.bonfire/specs/nanobot-vs-clawflow-verification.md`
+- skills 模块核查与验证: `.bonfire/specs/skills-module-verification.md`
 - CLI 入口: `packages/core/src/cli/index.ts`
 - Agent 主循环: `packages/core/src/agent/loop.ts`
 - Cron 服务: `packages/core/src/cron/service.ts`
