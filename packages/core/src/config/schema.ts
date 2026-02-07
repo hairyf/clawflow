@@ -17,9 +17,54 @@ export interface AgentDefaults {
 }
 
 export interface ToolsConfig {
-  web?: { search?: { apiKey?: string; maxResults?: number } }
+  web?: { search?: { apiKey?: string, maxResults?: number } }
   exec?: { timeout?: number }
   restrictToWorkspace?: boolean
+}
+
+/** WhatsApp: connects to Node.js bridge via WebSocket */
+export interface WhatsAppChannelConfig extends ChannelConfig {
+  bridgeUrl?: string
+}
+
+/** Telegram: Bot API long polling */
+export interface TelegramChannelConfig extends ChannelConfig {
+  token?: string
+  proxy?: string
+}
+
+/** Discord: Gateway WebSocket + REST */
+export interface DiscordChannelConfig extends ChannelConfig {
+  token?: string
+  gatewayUrl?: string
+  intents?: number
+}
+
+/** Feishu/Lark: WebSocket long connection */
+export interface FeishuChannelConfig extends ChannelConfig {
+  appId?: string
+  appSecret?: string
+  encryptKey?: string
+  verificationToken?: string
+}
+
+/** Base channel config with index signature for extensibility */
+export interface ChannelConfig {
+  enabled?: boolean
+  allowFrom?: string[]
+  [key: string]: unknown
+}
+
+export interface ChannelsConfig {
+  whatsapp?: WhatsAppChannelConfig
+  telegram?: TelegramChannelConfig
+  discord?: DiscordChannelConfig
+  feishu?: FeishuChannelConfig
+}
+
+export interface GatewayConfig {
+  host?: string
+  port?: number
 }
 
 export interface ClawflowConfig {
@@ -34,6 +79,8 @@ export interface ClawflowConfig {
     gemini?: ProviderConfig
   }
   tools?: ToolsConfig
+  channels?: ChannelsConfig
+  gateway?: GatewayConfig
 }
 
 export const defaultConfig: ClawflowConfig = {
@@ -52,4 +99,11 @@ export const defaultConfig: ClawflowConfig = {
     exec: { timeout: 60 },
     restrictToWorkspace: false,
   },
+  channels: {
+    whatsapp: { enabled: false, bridgeUrl: 'ws://localhost:3001', allowFrom: [] },
+    telegram: { enabled: false, token: '', allowFrom: [] },
+    discord: { enabled: false, token: '', allowFrom: [], gatewayUrl: 'wss://gateway.discord.gg/?v=10&encoding=json', intents: 37377 },
+    feishu: { enabled: false, appId: '', appSecret: '', allowFrom: [] },
+  },
+  gateway: { host: '0.0.0.0', port: 18790 },
 }

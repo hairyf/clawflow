@@ -3,10 +3,10 @@
  * @see sources/nanobot/nanobot/agent/tools/shell.py
  */
 
+import type { Tool } from './base'
 import { exec } from 'node:child_process'
+import process from 'node:process'
 import { promisify } from 'node:util'
-import { resolve } from 'pathe'
-import type { Tool } from './base.js'
 
 const execAsync = promisify(exec)
 
@@ -64,7 +64,7 @@ export function execTool(options: {
           out.push(`STDERR:\n${stderr}`)
         let result = out.join('\n') || '(no output)'
         if (result.length > 10000)
-          result = result.slice(0, 10000) + `\n... (truncated, ${result.length - 10000} more chars)`
+          result = `${result.slice(0, 10000)}\n... (truncated, ${result.length - 10000} more chars)`
         return result
       }
       catch (e: any) {

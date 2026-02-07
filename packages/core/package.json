@@ -14,7 +14,10 @@
   "bin": {
     "clawflow": "./bin/index.dev.mjs"
   },
-  "files": ["bin", "dist"],
+  "files": [
+    "bin",
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -40,17 +43,21 @@
     }
   },
   "dependencies": {
+    "@clack/prompts": "catalog:cli",
     "c12": "catalog:",
     "citty": "catalog:",
     "consola": "catalog:",
     "cron-parser": "catalog:",
+    "crossws": "catalog:",
     "defu": "catalog:",
     "destr": "catalog:",
     "ofetch": "catalog:",
-    "pathe": "catalog:"
+    "pathe": "catalog:",
+    "ws": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:types",
+    "@types/ws": "catalog:",
     "tsdown": "catalog:cli",
     "tsx": "catalog:cli",
     "typescript": "catalog:cli",

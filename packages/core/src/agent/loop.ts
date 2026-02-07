@@ -3,22 +3,23 @@
  * @see sources/nanobot/nanobot/agent/loop.py
  */
 
-import type { InboundMessage, OutboundMessage } from '../bus/events.js'
-import type { MessageBus } from '../bus/queue.js'
-import type { CronService } from '../cron/service.js'
-import type { LLMProvider } from '../providers/base.js'
-import type { SubagentManager } from './subagent.js'
-import { getSessionKey } from '../bus/events.js'
-import { hasToolCalls } from '../providers/base.js'
-import { SessionManager } from '../session/manager.js'
-import { ContextBuilder } from './context.js'
-import { cronTool } from './tools/cron-tool.js'
-import { editFileTool, listDirTool, readFileTool, writeFileTool } from './tools/filesystem.js'
-import { messageTool } from './tools/message.js'
-import { ToolRegistry } from './tools/registry.js'
-import { execTool } from './tools/shell.js'
-import { spawnTool } from './tools/spawn.js'
-import { webFetchTool, webSearchTool } from './tools/web.js'
+import type { InboundMessage, OutboundMessage } from '../bus/events'
+import type { MessageBus } from '../bus/queue'
+import type { CronService } from '../cron/service'
+import type { ChatMessage, LLMProvider, ToolCallRequest } from '../providers/base'
+import type { SubagentManager } from './subagent'
+import { getSessionKey } from '../bus/events'
+import { hasToolCalls } from '../providers/base'
+
+import { SessionManager } from '../session/manager'
+import { ContextBuilder } from './context'
+import { cronTool } from './tools/cron-tool'
+import { editFileTool, listDirTool, readFileTool, writeFileTool } from './tools/filesystem'
+import { messageTool } from './tools/message'
+import { ToolRegistry } from './tools/registry'
+import { execTool } from './tools/shell'
+import { spawnTool } from './tools/spawn'
+import { webFetchTool, webSearchTool } from './tools/web'
 
 export interface AgentLoopOptions {
   bus: MessageBus
@@ -119,7 +120,7 @@ export class AgentLoop {
 
   async processDirect(
     content: string,
-    sessionKey = 'cli:direct',
+    _sessionKey = 'cli:direct',
     channel = 'cli',
     chatId = 'direct',
   ): Promise<string> {
@@ -157,7 +158,7 @@ export class AgentLoop {
     let finalContent: string | null = null
     for (let iter = 0; iter < this.maxIterations; iter++) {
       const res = await this.provider.chat({
-        messages: messagesMutable,
+        messages: messagesMutable as unknown as ChatMessage[],
         tools: this.tools.getDefinitions(),
         model: this.model,
       })
@@ -165,7 +166,7 @@ export class AgentLoop {
         this.context.addAssistantMessage(
           messagesMutable,
           res.content,
-          res.toolCalls.map(tc => ({ id: tc.id, name: tc.name, arguments: tc.arguments })),
+          res.toolCalls.map((tc: ToolCallRequest) => ({ id: tc.id, name: tc.name, arguments: tc.arguments })),
         )
         for (const tc of res.toolCalls) {
           const result = await this.tools.execute(tc.name, tc.arguments)
@@ -203,7 +204,7 @@ export class AgentLoop {
     let finalContent: string | null = null
     for (let iter = 0; iter < this.maxIterations; iter++) {
       const res = await this.provider.chat({
-        messages: messagesMutable,
+        messages: messagesMutable as unknown as ChatMessage[],
         tools: this.tools.getDefinitions(),
         model: this.model,
       })
@@ -211,7 +212,7 @@ export class AgentLoop {
         this.context.addAssistantMessage(
           messagesMutable,
           res.content,
-          res.toolCalls.map(tc => ({ id: tc.id, name: tc.name, arguments: tc.arguments })),
+          res.toolCalls.map((tc: ToolCallRequest) => ({ id: tc.id, name: tc.name, arguments: tc.arguments })),
         )
         for (const tc of res.toolCalls) {
           const result = await this.tools.execute(tc.name, tc.arguments)

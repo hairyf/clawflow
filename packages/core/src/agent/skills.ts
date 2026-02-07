@@ -3,7 +3,7 @@
  * @see sources/nanobot/nanobot/agent/skills.py
  */
 
-import { readFileSync, existsSync, readdirSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'pathe'
 
 export interface SkillInfo {

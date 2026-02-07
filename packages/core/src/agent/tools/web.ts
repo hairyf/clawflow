@@ -3,8 +3,9 @@
  * @see sources/nanobot/nanobot/agent/tools/web.py
  */
 
+import type { Tool } from './base'
+import process from 'node:process'
 import { ofetch } from 'ofetch'
-import type { Tool } from './base.js'
 
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/115.0'
 
@@ -26,7 +27,7 @@ export function webSearchTool(apiKey?: string, maxResults = 5): Tool {
         return 'Error: BRAVE_API_KEY not configured'
       const n = Math.min(Math.max(Number(count) || maxResults, 1), 10)
       try {
-        const r = await ofetch<{ web?: { results?: Array<{ title?: string; url?: string; description?: string }> } }>(
+        const r = await ofetch<{ web?: { results?: Array<{ title?: string, url?: string, description?: string }> } }>(
           'https://api.search.brave.com/res/v1/web/search',
           {
             params: { q: query, count: n },

@@ -3,7 +3,7 @@
  * @see sources/nanobot/nanobot/bus/queue.py
  */
 
-import type { InboundMessage, OutboundMessage } from './events.js'
+import type { InboundMessage, OutboundMessage } from './events'
 import { consola } from 'consola'
 
 export type OutboundCallback = (msg: OutboundMessage) => Promise<void>

@@ -3,13 +3,13 @@
  * @see sources/nanobot/nanobot/agent/subagent.py
  */
 
-import type { InboundMessage } from '../bus/events.js'
-import type { MessageBus } from '../bus/queue.js'
-import type { LLMProvider } from '../providers/base.js'
-import { listDirTool, readFileTool, writeFileTool } from './tools/filesystem.js'
-import { ToolRegistry } from './tools/registry.js'
-import { execTool } from './tools/shell.js'
-import { webFetchTool, webSearchTool } from './tools/web.js'
+import type { InboundMessage } from '../bus/events'
+import type { MessageBus } from '../bus/queue'
+import type { ChatMessage, LLMProvider } from '../providers/base'
+import { listDirTool, readFileTool, writeFileTool } from './tools/filesystem'
+import { ToolRegistry } from './tools/registry'
+import { execTool } from './tools/shell'
+import { webFetchTool, webSearchTool } from './tools/web'
 
 export interface SubagentManagerOptions {
   provider: LLMProvider
@@ -91,7 +91,7 @@ ${this.workspace}`
     let finalResult: string | null = null
     for (let i = 0; i < maxIterations; i++) {
       const res = await this.provider.chat({
-        messages,
+        messages: messages as unknown as ChatMessage[],
         tools: tools.getDefinitions(),
         model: this.model,
       })

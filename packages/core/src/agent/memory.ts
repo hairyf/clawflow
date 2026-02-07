@@ -3,9 +3,9 @@
  * @see sources/nanobot/nanobot/agent/memory.py
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'pathe'
-import { ensureDir, todayDate } from '../utils/helpers.js'
+import { ensureDir, todayDate } from '../utils/helpers'
 
 export class MemoryStore {
   private memoryDir: string
@@ -41,10 +41,10 @@ export class MemoryStore {
     const parts: string[] = []
     const long = this.readLongTerm()
     if (long)
-      parts.push('## Long-term Memory\n' + long)
+      parts.push(`## Long-term Memory\n${long}`)
     const today = this.readToday()
     if (today)
-      parts.push("## Today's Notes\n" + today)
+      parts.push(`## Today's Notes\n${today}`)
     return parts.join('\n\n')
   }
 }

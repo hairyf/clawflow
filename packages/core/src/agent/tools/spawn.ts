@@ -3,13 +3,13 @@
  * @see sources/nanobot/nanobot/agent/tools/spawn.py
  */
 
-import type { Tool } from './base.js'
+import type { Tool } from './base'
 
 export interface SubagentManagerLike {
-  spawn(task: string, label: string | undefined, originChannel: string, originChatId: string): Promise<string>
+  spawn: (task: string, label: string | undefined, originChannel: string, originChatId: string) => Promise<string>
 }
 
-export function spawnTool(manager: SubagentManagerLike): Tool & { setContext(channel: string, chatId: string): void } {
+export function spawnTool(manager: SubagentManagerLike): Tool & { setContext: (channel: string, chatId: string) => void } {
   let originChannel = 'cli'
   let originChatId = 'direct'
   return {

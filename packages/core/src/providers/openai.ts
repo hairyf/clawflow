@@ -3,7 +3,7 @@
  * @see sources/nanobot/nanobot/providers/litellm_provider.py
  */
 
-import type { LLMProvider, LLMResponse, ToolCallRequest } from './base.js'
+import type { LLMProvider, ToolCallRequest } from './base'
 import { destr } from 'destr'
 import { ofetch } from 'ofetch'
 
@@ -80,9 +80,9 @@ export function createOpenAIProvider(options: {
         finishReason: choice.finish_reason ?? 'stop',
         usage: res.usage
           ? {
-              prompt_tokens: res.usage.prompt_tokens,
-              completion_tokens: res.usage.completion_tokens,
-              total_tokens: res.usage.total_tokens,
+              prompt_tokens: res.usage.prompt_tokens ?? 0,
+              completion_tokens: res.usage.completion_tokens ?? 0,
+              total_tokens: res.usage.total_tokens ?? 0,
             }
           : undefined,
       }

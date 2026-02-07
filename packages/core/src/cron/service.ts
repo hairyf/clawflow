@@ -3,11 +3,11 @@
  * @see sources/nanobot/nanobot/cron/service.py
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
-import { dirname } from 'pathe'
-import cronParser from 'cron-parser'
+import type { CronJob, CronSchedule, CronStore } from './types'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { consola } from 'consola'
-import type { CronJob, CronSchedule, CronStore } from './types.js'
+import cronParser from 'cron-parser'
+import { dirname } from 'pathe'
 
 function nowMs(): number {
   return Date.now()
@@ -174,8 +174,9 @@ export class CronService {
     job.state.lastRunAtMs = start
     job.updatedAtMs = nowMs()
     if (job.schedule.kind === 'at') {
-      if (job.deleteAfterRun)
+      if (job.deleteAfterRun) {
         this.store!.jobs = this.store!.jobs.filter(j => j.id !== job.id)
+      }
       else {
         job.enabled = false
         job.state.nextRunAtMs = undefined
@@ -217,7 +218,7 @@ export class CronService {
     name: string,
     schedule: CronSchedule,
     message: string,
-    opts: { deliver?: boolean; channel?: string; to?: string } = {},
+    opts: { deliver?: boolean, channel?: string, to?: string } = {},
   ): CronJob {
     const store = this.loadStore()
     const now = nowMs()

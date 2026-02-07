@@ -5,9 +5,9 @@
 
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'pathe'
-import { getRuntimeInfo } from '../utils/helpers.js'
-import { MemoryStore } from './memory.js'
-import { SkillsLoader } from './skills.js'
+import { getRuntimeInfo } from '../utils/helpers'
+import { MemoryStore } from './memory'
+import { SkillsLoader } from './skills'
 
 const BOOTSTRAP_FILES = ['AGENTS.md', 'SOUL.md', 'USER.md', 'TOOLS.md', 'IDENTITY.md']
 

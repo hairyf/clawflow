@@ -3,9 +3,9 @@
  * @see sources/nanobot/nanobot/agent/tools/filesystem.py
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs'
-import { resolve, dirname } from 'pathe'
-import type { Tool } from './base.js'
+import type { Tool } from './base'
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { dirname, resolve } from 'pathe'
 
 function resolvePath(path: string, allowedDir?: string | null): string {
   const resolved = resolve(path)
@@ -117,7 +117,7 @@ function createListDirTool(allowedDir: string | null): Tool {
         if (!existsSync(p))
           return `Error: Directory not found: ${path}`
         const names = readdirSync(p)
-        const entries = names.map(n => {
+        const entries = names.map((n) => {
           const full = `${p}/${n}`
           const isDir = existsSync(full) && statSync(full).isDirectory()
           return (isDir ? '📁 ' : '📄 ') + n

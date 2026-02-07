@@ -5,6 +5,7 @@
 
 import { existsSync, mkdirSync } from 'node:fs'
 import { homedir, platform } from 'node:os'
+import process from 'node:process'
 import { join, resolve } from 'pathe'
 
 const DATA_DIR = join(homedir(), '.clawflow')

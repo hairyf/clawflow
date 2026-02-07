@@ -3,13 +3,13 @@
  * @see sources/nanobot/nanobot/config/loader.py
  */
 
-import type { ClawflowConfig } from './schema.js'
+import type { ClawflowConfig } from './schema'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { defu } from 'defu'
 import { dirname, resolve } from 'pathe'
-import { getConfigPath } from '../utils/helpers.js'
-import { defaultConfig } from './schema.js'
+import { getConfigPath } from '../utils/helpers'
+import { defaultConfig } from './schema'
 
 export async function loadConfig(overridePath?: string): Promise<ClawflowConfig> {
   const path = overridePath ?? getConfigPath()

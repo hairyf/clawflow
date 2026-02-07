@@ -13,8 +13,9 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
-  "include": [
-    "sources/**/*.ts",
-    "skills/**/*.ts"
+  "exclude": [
+    "node_modules",
+    "sources",
+    "dist"
   ]
 }

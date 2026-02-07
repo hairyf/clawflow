@@ -23,7 +23,7 @@ export interface Tool {
   readonly name: string
   readonly description: string
   readonly parameters: ToolParameterSchema
-  execute(args: Record<string, unknown>): Promise<string>
+  execute: (args: Record<string, unknown>) => Promise<string>
 }
 
 export function toolToSchema(tool: Tool): ToolDefinition {

@@ -3,11 +3,11 @@
  * @see sources/nanobot/nanobot/agent/tools/cron.py
  */
 
-import type { Tool } from './base.js'
-import type { CronService } from '../../cron/service.js'
-import type { CronSchedule } from '../../cron/types.js'
+import type { CronService } from '../../cron/service'
+import type { CronSchedule } from '../../cron/types'
+import type { Tool } from './base'
 
-export function cronTool(service: CronService): Tool & { setContext(channel: string, chatId: string): void } {
+export function cronTool(service: CronService): Tool & { setContext: (channel: string, chatId: string) => void } {
   let channel = ''
   let chatId = ''
   return {
@@ -19,7 +19,7 @@ export function cronTool(service: CronService): Tool & { setContext(channel: str
         action: { type: 'string', enum: ['add', 'list', 'remove'], description: 'Action to perform' },
         message: { type: 'string', description: 'Reminder message (for add)' },
         every_seconds: { type: 'number', description: 'Interval in seconds (for add)' },
-        cron_expr: { type: 'string', description: "Cron expression e.g. '0 9 * * *' (for add)" },
+        cron_expr: { type: 'string', description: 'Cron expression e.g. \'0 9 * * *\' (for add)' },
         job_id: { type: 'string', description: 'Job ID (for remove)' },
       },
       required: ['action'],
@@ -55,7 +55,7 @@ export function cronTool(service: CronService): Tool & { setContext(channel: str
         const jobs = service.listJobs()
         if (jobs.length === 0)
           return 'No scheduled jobs.'
-        return 'Scheduled jobs:\n' + jobs.map(j => `- ${j.name} (id: ${j.id}, ${j.schedule.kind})`).join('\n')
+        return `Scheduled jobs:\n${jobs.map(j => `- ${j.name} (id: ${j.id}, ${j.schedule.kind})`).join('\n')}`
       }
       if (action === 'remove') {
         if (!job_id)

@@ -3,12 +3,12 @@
  * @see sources/nanobot/nanobot/agent/tools/message.py
  */
 
-import type { OutboundMessage } from '../../bus/events.js'
-import type { Tool } from './base.js'
+import type { OutboundMessage } from '../../bus/events'
+import type { Tool } from './base'
 
 export type SendCallback = (msg: OutboundMessage) => Promise<void>
 
-export function messageTool(sendCallback?: SendCallback): Tool & { setContext(channel: string, chatId: string): void } {
+export function messageTool(sendCallback?: SendCallback): Tool & { setContext: (channel: string, chatId: string) => void } {
   let channel = ''
   let chatId = ''
   const send = sendCallback ?? (async () => {})

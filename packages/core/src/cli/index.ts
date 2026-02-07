@@ -2,17 +2,19 @@
  * ClawFlow CLI (citty). Commands: onboard, agent, status, cron.
  */
 
-import type { CronSchedule } from '../cron/types.js'
+import type { CronSchedule } from '../cron/types'
+import process from 'node:process'
+import { intro, outro } from '@clack/prompts'
 import { defineCommand, runMain } from 'citty'
 import { consola } from 'consola'
-import { AgentLoop } from '../agent/loop.js'
-import { SubagentManager } from '../agent/subagent.js'
-import { MessageBus } from '../bus/queue.js'
-import { getApiBase, getApiKey, getWorkspacePathFromConfig, loadConfig, saveConfig } from '../config/loader.js'
-import { defaultConfig } from '../config/schema.js'
-import { CronService } from '../cron/service.js'
-import { createOpenAIProvider } from '../providers/openai.js'
-import { getConfigPath, getCronStorePath, getWorkspacePath } from '../utils/helpers.js'
+import { AgentLoop } from '../agent/loop'
+import { SubagentManager } from '../agent/subagent'
+import { MessageBus } from '../bus/queue'
+import { getApiBase, getApiKey, getWorkspacePathFromConfig, loadConfig, saveConfig } from '../config/loader'
+import { defaultConfig } from '../config/schema'
+import { CronService } from '../cron/service'
+import { createOpenAIProvider } from '../providers/openai'
+import { getConfigPath, getCronStorePath, getWorkspacePath } from '../utils/helpers'
 
 const LOGO = '🐈'
 
@@ -134,12 +136,39 @@ const main = defineCommand({
         const config = await loadConfig()
         const workspace = getWorkspacePathFromConfig(config)
         const { existsSync } = await import('node:fs')
-        consola.log(`${LOGO} ClawFlow Status\n`)
+        intro(`${LOGO} ClawFlow Status`)
         consola.log(`Config: ${configPath} ${existsSync(configPath) ? '✓' : '✗'}`)
         consola.log(`Workspace: ${workspace} ${existsSync(workspace) ? '✓' : '✗'}`)
         consola.log(`Model: ${config.agents?.defaults?.model ?? 'default'}`)
         const key = getApiKey(config)
         consola.log(`API key: ${key ? '✓' : 'not set'}`)
+        outro('Done')
+      },
+    }),
+    channels: defineCommand({
+      meta: { description: 'Chat channels (Telegram, Discord, Feishu, WhatsApp)' },
+      subCommands: {
+        status: defineCommand({
+          meta: { description: 'Show channel status (from config)' },
+          async run() {
+            intro(`${LOGO} Channels`)
+            const config = await loadConfig()
+            const ch = config.channels ?? {}
+            const rows: [string, boolean][] = [
+              ['telegram', ch.telegram?.enabled ?? false],
+              ['discord', ch.discord?.enabled ?? false],
+              ['feishu', ch.feishu?.enabled ?? false],
+              ['whatsapp', ch.whatsapp?.enabled ?? false],
+            ]
+            consola.log('Channel    Enabled (in config)')
+            for (const [name, on] of rows) {
+              consola.log(`${name.padEnd(10)} ${on ? '✓' : '—'}`)
+            }
+            if (!rows.some(([, on]) => on))
+              consola.info('Enable in config: channels.telegram.enabled, etc.')
+            outro('Done')
+          },
+        }),
       },
     }),
     cron: defineCommand({

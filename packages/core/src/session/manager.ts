@@ -3,9 +3,9 @@
  * @see sources/nanobot/nanobot/session/manager.py
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs'
-import { join, dirname } from 'pathe'
-import { getSessionsPath, safeFilename } from '../utils/helpers.js'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'pathe'
+import { getSessionsPath, safeFilename } from '../utils/helpers'
 
 export interface SessionMessage {
   role: string
@@ -30,7 +30,7 @@ export class SessionManager {
   private sessionsDir: string
   private cache = new Map<string, Session>()
 
-  constructor(workspace?: string) {
+  constructor(_workspace?: string) {
     this.sessionsDir = getSessionsPath()
   }
 
@@ -96,7 +96,7 @@ export class SessionManager {
     session.updatedAt = nowIso()
   }
 
-  getHistory(session: Session, maxMessages = 50): Array<{ role: string; content: string }> {
+  getHistory(session: Session, maxMessages = 50): Array<{ role: string, content: string }> {
     const recent = session.messages.slice(-maxMessages)
     return recent.map(m => ({ role: m.role, content: m.content }))
   }

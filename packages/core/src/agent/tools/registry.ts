@@ -3,7 +3,7 @@
  * @see sources/nanobot/nanobot/agent/tools/registry.py
  */
 
-import type { Tool, ToolDefinition } from './base.js'
+import type { Tool, ToolDefinition } from './base'
 
 export class ToolRegistry {
   private tools = new Map<string, Tool>()
