@@ -245,6 +245,22 @@ export class CronService {
     return job
   }
 
+  enableJob(jobId: string, enabled: boolean): CronJob | null {
+    const store = this.loadStore()
+    const job = store.jobs.find(j => j.id === jobId)
+    if (!job)
+      return null
+    if (job.enabled === enabled)
+      return job
+    job.enabled = enabled
+    job.updatedAtMs = nowMs()
+    if (enabled && !job.state.nextRunAtMs)
+      job.state.nextRunAtMs = computeNextRun(job.schedule, nowMs())
+    this.saveStore()
+    this.armTimer()
+    return job
+  }
+
   removeJob(jobId: string): boolean {
     const store = this.loadStore()
     const before = store.jobs.length

@@ -11,6 +11,7 @@ packages:
   - packages/*
   - examples/*
 catalog:
+  '@ai-sdk/amazon-bedrock': ^4.0.0
   '@ai-sdk/anthropic': ^3.0.38
   '@ai-sdk/deepseek': ^2.0.18
   '@ai-sdk/google': ^3.0.22

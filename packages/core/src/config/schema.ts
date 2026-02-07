@@ -8,6 +8,14 @@ export interface ProviderConfig {
   apiBase?: string
 }
 
+/** AWS Bedrock: region + credentials (or env: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION) */
+export interface BedrockProviderConfig extends ProviderConfig {
+  region?: string
+  accessKeyId?: string
+  secretAccessKey?: string
+  sessionToken?: string
+}
+
 export interface AgentDefaults {
   workspace?: string
   model?: string
@@ -90,6 +98,7 @@ export interface ClawflowConfig {
     gemini?: ProviderConfig
     zhipu?: ProviderConfig
     moonshot?: ProviderConfig
+    bedrock?: BedrockProviderConfig
   }
   tools?: ToolsConfig
   channels?: ChannelsConfig

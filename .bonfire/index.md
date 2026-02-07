@@ -44,13 +44,13 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 5. [x] **gateway** - `clawflow gateway start`
 
 ### 二、CLI 命令差异
-6. [ ] **cron add** - 补齐 `--at`、`--deliver`、`--to`、`--channel`
-7. [ ] **cron enable** - `clawflow cron enable <job_id> [--disable]`
-8. [ ] **cron run** - `clawflow cron run <job_id> [--force]`
-9. [ ] **channels login** - WhatsApp 扫码（封装 bridge start）
+6. [x] **cron add** - 补齐 `--at`、`--deliver`、`--to`、`--channel`
+7. [x] **cron enable** - `clawflow cron enable <job_id> [--disable]`
+8. [x] **cron run** - `clawflow cron run <job_id> [--force]`
+9. [x] **channels login** - WhatsApp 扫码（封装 bridge start）
 
 ### 三、CronService API
-10. [ ] **enableJob** - `enableJob(jobId, enabled): CronJob | null`
+10. [x] **enableJob** - `enableJob(jobId, enabled): CronJob | null`
 
 ### 四、Config / Provider 路由
 11. [x] **getApiKey** - 按 model 选择 provider（已实现 matchProviderByModel）
@@ -60,7 +60,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ### 五、架构差异（可选）
 15. [x] **多 provider 路由** - LiteLLM 风格或增强现有 loader
-16. [ ] **Bedrock 支持** - 若有需求
+16. [x] **Bedrock 支持** - @ai-sdk/amazon-bedrock、config.providers.bedrock、路由
 
 ---
 

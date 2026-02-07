@@ -6,6 +6,7 @@
 import type { ClawflowConfig } from './schema'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
+import process from 'node:process'
 import { defu } from 'defu'
 import { dirname, resolve } from 'pathe'
 import { getConfigPath } from '../utils/helpers'
@@ -60,6 +61,12 @@ function matchProviderByModel(config: ClawflowConfig, model?: string): { apiKey?
     return match(providers.zhipu)
   if (m.includes('moonshot') || m.includes('kimi'))
     return match(providers.moonshot)
+  if (m.includes('bedrock') || /anthropic\.claude|meta\.|amazon\.|us\.|apac\./.test(m)) {
+    const region = providers.bedrock?.region ?? (typeof process !== 'undefined' ? process.env.AWS_REGION : undefined)
+    if (region)
+      return { apiKey: providers.bedrock?.accessKeyId ?? providers.bedrock?.apiKey ?? process.env.AWS_ACCESS_KEY_ID ?? 'aws', apiBase: region }
+    return undefined
+  }
   if (m.includes('openai') || m.includes('gpt'))
     return match(providers.openai) ?? match(providers.openrouter)
   if (m.includes('vllm'))
@@ -83,10 +90,13 @@ export function getApiKey(config: ClawflowConfig, model?: string): string | unde
     providers.moonshot,
     providers.groq,
     providers.vllm,
+    providers.bedrock,
   ]
   for (const p of order) {
     if (p?.apiKey)
       return p.apiKey
+    if (p && 'region' in p && (p as { region?: string }).region)
+      return (p as { accessKeyId?: string }).accessKeyId ?? process.env.AWS_ACCESS_KEY_ID ?? 'aws'
   }
   return undefined
 }
@@ -105,5 +115,7 @@ export function getApiBase(config: ClawflowConfig, model?: string): string | und
     return config.providers?.vllm?.apiBase
   if (modelLower.includes('moonshot') || modelLower.includes('kimi'))
     return config.providers?.moonshot?.apiBase ?? 'https://api.moonshot.cn/v1'
+  if (modelLower.includes('bedrock') || /anthropic\.claude|meta\.|amazon\.|us\.|apac\./.test(modelLower))
+    return config.providers?.bedrock?.region ?? process.env.AWS_REGION
   return undefined
 }

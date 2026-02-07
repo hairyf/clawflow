@@ -167,6 +167,25 @@ const main = defineCommand({
             outro('Done')
           },
         }),
+        login: defineCommand({
+          meta: { description: 'WhatsApp: link device via QR code (starts bridge)' },
+          async run() {
+            const config = await loadConfig()
+            const bridgeConfig = config.bridge ?? { port: 3001, authDir: '~/.clawflow/whatsapp-auth' }
+            consola.info(`${LOGO} Starting WhatsApp bridge...`)
+            consola.info('Scan the QR code to connect.\n')
+            const server = await startBridge(bridgeConfig)
+            process.on('SIGINT', async () => {
+              consola.info('Shutting down bridge...')
+              await server.stop()
+              process.exit(0)
+            })
+            process.on('SIGTERM', async () => {
+              await server.stop()
+              process.exit(0)
+            })
+          },
+        }),
       },
     }),
     bridge: defineCommand({
@@ -245,6 +264,10 @@ const main = defineCommand({
             message: { type: 'string', alias: 'm', required: true },
             every: { type: 'string', alias: 'e', description: 'Every N seconds' },
             cron: { type: 'string', alias: 'c', description: 'Cron expression' },
+            at: { type: 'string', alias: 'a', description: 'Run once at time (ISO format, e.g. 2025-02-07T15:00:00)' },
+            deliver: { type: 'boolean', alias: 'd', default: false, description: 'Deliver response to channel' },
+            to: { type: 'string', alias: 't', description: 'Recipient for delivery (chat_id)' },
+            channel: { type: 'string', alias: 'ch', description: 'Channel for delivery (e.g. telegram, whatsapp)' },
           },
           async run({ args }) {
             let schedule: CronSchedule
@@ -254,12 +277,24 @@ const main = defineCommand({
             else if (args.cron) {
               schedule = { kind: 'cron', expr: args.cron }
             }
+            else if (args.at) {
+              const atMs = new Date(args.at).getTime()
+              if (Number.isNaN(atMs)) {
+                consola.error('Invalid --at format. Use ISO format, e.g. 2025-02-07T15:00:00')
+                process.exit(1)
+              }
+              schedule = { kind: 'at', atMs }
+            }
             else {
-              consola.error('Specify --every or --cron')
+              consola.error('Specify --every, --cron, or --at')
               process.exit(1)
             }
             const service = new CronService(getCronStorePath())
-            const job = service.addJob(args.name as string, schedule, args.message as string)
+            const job = service.addJob(args.name as string, schedule, args.message as string, {
+              deliver: args.deliver ?? false,
+              channel: args.channel as string | undefined,
+              to: args.to as string | undefined,
+            })
             consola.success(`Added job '${job.name}' (${job.id})`)
           },
         }),
@@ -277,6 +312,91 @@ const main = defineCommand({
               consola.success(`Removed ${id}`)
             else
               consola.error(`Job ${id} not found`)
+          },
+        }),
+        enable: defineCommand({
+          meta: { description: 'Enable or disable a job' },
+          args: {
+            jobId: { type: 'positional', description: 'Job ID' },
+            disable: { type: 'boolean', default: false, description: 'Disable instead of enable' },
+          },
+          async run({ args }) {
+            const id = (args._?.[0] ?? args.jobId) as string
+            if (!id) {
+              consola.error('Usage: clawflow cron enable <job_id> [--disable]')
+              process.exit(1)
+            }
+            const service = new CronService(getCronStorePath())
+            const job = service.enableJob(id, !args.disable)
+            if (job)
+              consola.success(`Job '${job.name}' ${args.disable ? 'disabled' : 'enabled'}`)
+            else
+              consola.error(`Job ${id} not found`)
+          },
+        }),
+        run: defineCommand({
+          meta: { description: 'Manually run a job' },
+          args: {
+            jobId: { type: 'positional', description: 'Job ID' },
+            force: { type: 'boolean', alias: 'f', default: false, description: 'Run even if disabled' },
+          },
+          async run({ args }) {
+            const id = (args._?.[0] ?? args.jobId) as string
+            if (!id) {
+              consola.error('Usage: clawflow cron run <job_id> [--force]')
+              process.exit(1)
+            }
+            const config = await loadConfig()
+            const apiKey = getApiKey(config)
+            if (!apiKey) {
+              consola.error('No API key configured. Run clawflow onboard and set API key in config.')
+              process.exit(1)
+            }
+            const workspace = getWorkspacePathFromConfig(config)
+            const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
+            const provider = createAISDKProvider({ config, defaultModel: model })
+            const bus = new MessageBus()
+            const subagent = new SubagentManager({
+              provider,
+              workspace,
+              bus,
+              model,
+              braveApiKey: config.tools?.web?.search?.apiKey,
+              execTimeout: config.tools?.exec?.timeout,
+              restrictToWorkspace: config.tools?.restrictToWorkspace,
+            })
+            const agent = new AgentLoop({
+              bus,
+              provider,
+              workspace,
+              model,
+              braveApiKey: config.tools?.web?.search?.apiKey,
+              execTimeout: config.tools?.exec?.timeout,
+              restrictToWorkspace: config.tools?.restrictToWorkspace,
+              subagentManager: subagent,
+            })
+            const cronService = new CronService(getCronStorePath())
+            cronService.onJob = async (job) => {
+              const response = await agent.processDirect(
+                job.payload.message,
+                `cron:${job.id}`,
+                job.payload.channel ?? 'cli',
+                job.payload.to ?? 'direct',
+              )
+              if (job.payload.deliver && job.payload.channel && job.payload.to) {
+                await bus.publishOutbound({
+                  channel: job.payload.channel,
+                  chatId: job.payload.to,
+                  content: response ?? '',
+                })
+              }
+              return response
+            }
+            const ok = await cronService.runJob(id, args.force)
+            if (ok)
+              consola.success('Job executed')
+            else
+              consola.error(`Failed to run job ${id}`)
           },
         }),
       },

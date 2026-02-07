@@ -8,6 +8,8 @@
 import type { ModelMessage } from 'ai'
 import type { ClawflowConfig } from '../config/schema'
 import type { LLMProvider, ToolCallRequest } from './base'
+import process from 'node:process'
+import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock'
 import { createAnthropic } from '@ai-sdk/anthropic'
 import { createDeepSeek } from '@ai-sdk/deepseek'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
@@ -45,6 +47,23 @@ type IncomingMessage
 function createModel(config: ClawflowConfig, modelName: string) {
   const m = modelName.toLowerCase()
   const providers = config.providers ?? {}
+
+  if (m.includes('bedrock') || /anthropic\.claude|meta\.|amazon\.|us\.|apac\./.test(m)) {
+    const p = providers.bedrock
+    const region = p?.region ?? (typeof process !== 'undefined' ? process.env.AWS_REGION : undefined)
+    if (!region)
+      throw new Error(`AWS Bedrock region required. Set providers.bedrock.region or AWS_REGION for model: ${modelName}`)
+    const bedrock = createAmazonBedrock({
+      region,
+      ...(p?.accessKeyId && p?.secretAccessKey && {
+        accessKeyId: p.accessKeyId,
+        secretAccessKey: p.secretAccessKey,
+        ...(p.sessionToken && { sessionToken: p.sessionToken }),
+      }),
+      ...(p?.apiKey && { apiKey: p.apiKey }),
+    })
+    return bedrock(modelName)
+  }
 
   if (m.includes('anthropic') || m.includes('claude')) {
     const p = providers.anthropic
