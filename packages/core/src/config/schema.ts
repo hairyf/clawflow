@@ -86,7 +86,7 @@ export interface BridgeConfig {
   authDir?: string
 }
 
-export interface ClawflowConfig {
+export interface NanobotPmConfig {
   agents?: { defaults?: AgentDefaults }
   providers?: {
     openrouter?: ProviderConfig
@@ -107,10 +107,10 @@ export interface ClawflowConfig {
   bridge?: BridgeConfig
 }
 
-export const defaultConfig: ClawflowConfig = {
+export const defaultConfig: NanobotPmConfig = {
   agents: {
     defaults: {
-      workspace: '~/.clawflow/workspace',
+      workspace: '~/.nanobot-pm/workspace',
       model: 'anthropic/claude-sonnet-4',
       maxTokens: 8192,
       temperature: 0.7,
@@ -131,5 +131,5 @@ export const defaultConfig: ClawflowConfig = {
   },
   gateway: { host: '0.0.0.0', port: 18790 },
   heartbeat: { enabled: true, intervalS: 30 * 60 },
-  bridge: { port: 3001, authDir: '~/.clawflow/whatsapp-auth' },
+  bridge: { port: 3001, authDir: '~/.nanobot-pm/whatsapp-auth' },
 }

@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow validate_tool_params ↔ nanobot agent/tools/base.py validate_params
+ * A/B tests: nanobot-pm validate_tool_params ↔ nanobot agent/tools/base.py validate_params
  * Reference: sources/nanobot/tests/test_tool_validation.py
  */
 

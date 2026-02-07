@@ -6,7 +6,7 @@
  */
 
 import type { ModelMessage } from 'ai'
-import type { ClawflowConfig } from '../config/schema'
+import type { NanobotPmConfig } from '../config/schema'
 import type { LLMProvider, ToolCallRequest } from './base'
 import process from 'node:process'
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock'
@@ -50,7 +50,7 @@ type IncomingMessage
     | IncomingAssistantMessage
     | IncomingToolMessage
 
-function createModel(config: ClawflowConfig, modelName: string) {
+function createModel(config: NanobotPmConfig, modelName: string) {
   const m = modelName.toLowerCase()
   const providers = config.providers ?? {}
 
@@ -233,7 +233,7 @@ function toUsageRecord(usage: { inputTokens?: number, outputTokens?: number, tot
 }
 
 export interface CreateAISDKProviderOptions {
-  config: ClawflowConfig
+  config: NanobotPmConfig
   defaultModel: string
 }
 

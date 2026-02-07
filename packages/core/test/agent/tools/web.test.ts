@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/tools/web ↔ nanobot agent/tools/web.py
+ * A/B tests: nanobot-pm agent/tools/web ↔ nanobot agent/tools/web.py
  * Uses vi.stubEnv and mock fetch to avoid real API/HTTP.
  */
 

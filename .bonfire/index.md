@@ -5,17 +5,17 @@ git: commit-all
 linear: false
 ---
 
-# Session Context: clawflow
+# Session Context: nanobot-pm
 
 **Date**: 2025-02-07
-**Status**: Started
+**Status**: Active
 **Branch**: main
 
 ---
 
 ## Current State
 
-clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，采用 monorepo 结构。当前实现包括：
+nanobot-pm 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，采用 monorepo 结构。当前实现包括：
 
 - **packages/core**: 核心包，包含 agent loop、bus、tools、cron、providers、session、config 等模块
 - **skills/nanobot**: 从 nanobot Python 项目提取的技能参考
@@ -25,7 +25,8 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
-- **2025-02-07** (本会话): **packages/core test/ nanobot a/b 对照单元测试** — 新建 `test/` 目录，vitest 包含 `test/**/*.test.ts`；新增 base、registry、helpers、bus/events、bus/queue、agent/context、memory、skills、session、cron、config、subagent、tools（filesystem、cron-tool、message、shell、web）共 19 个测试文件、114 用例；shell/web 使用 vi.mock/vi.hoisted 模拟 exec、ofetch；loader getApiKey/getApiBase 对齐 nanobot _match_provider；SessionManager 增加 `sessionsDir` 可选参数便于测试；覆盖率 72% → 84%（shell 100%、web 96%）。
+- **2025-02-07** (本会话): **snake_case 命名统一 + 文件命名对齐 + AGENTS.md 约束** — 创建 `scripts/snake-case-rename.mjs` 批量重命名 591 处（方法/函数/属性）为 snake_case；`cron-tool.ts` → `cron.ts`、`cron-tool.test.ts` → `cron.test.ts` 与 nanobot 对齐；新增 `.bonfire/specs/snake-case-rename-map.md`、`code-file-naming-diff.md`；根目录 AGENTS.md 增加 AI 约束（naming、file structure、syncing with nanobot）；修复 gateway 中 `../heartbeat/service` → `../heartbeat`。
+- **2025-02-07**: **packages/core test/ nanobot a/b 对照单元测试** — 新建 `test/` 目录，vitest 包含 `test/**/*.test.ts`；新增 base、registry、helpers、bus/events、bus/queue、agent/context、memory、skills、session、cron、config、subagent、tools（filesystem、cron-tool、message、shell、web）共 19 个测试文件、114 用例；shell/web 使用 vi.mock/vi.hoisted 模拟 exec、ofetch；loader getApiKey/getApiBase 对齐 nanobot _match_provider；SessionManager 增加 `sessionsDir` 可选参数便于测试；覆盖率 72% → 84%（shell 100%、web 96%）。
 - **2025-02-07**: **nanobot 对照精简与 get_running_count** — 删除 `nanobot-vs-clawflow-verification.md`、`skills-module-verification.md`；新增 `code-file-mapping.md`、`code-file-diff.md`；修复 loop chat_id 解析；实现 `SubagentManager.getRunningCount()`。
 - **2025-02-07**: **Skills 核查与单元测试** — 写 `.bonfire/specs/skills-module-verification.md`；`context.test.ts` 三用例；ContextBuilder 可选 `skills?: SkillsLoader`；vitest/tsdown 排除 `*.test.ts`。
 - **2025-02-07**: **任务 19 Skills + 打包携带 skills** — SkillsLoader：builtin 目录、getSkillMetadata/stripFrontmatter/checkRequirements、getAlwaysSkills、loadSkillsForContext；utils 增加 getSkillsPath；build 时 `scripts/copy-skills.mjs` 将 repo `skills/` 复制到 `dist/skills`，打包携带 builtin skills。
@@ -36,11 +37,11 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 - **2025-02-07**: **nanobot 逐行核查与待办清单** — 逐项对照 `packages/core/src` 与 `sources/nanobot`；撰写 `.bonfire/specs/nanobot-vs-clawflow-verification.md`，约定排除名称/品牌后**其余差异全部解决**，并列出 24 项待解决清单（Context/media+skills、Loop/media、Memory 三项 API、Skills 渐进加载与 builtin、Subagent 失败回传、Tool 校验与 registry、Session delete/list/clear、Cron deleteAfterRun、Config migrate、Utils 三项）。下一步：按该 spec 逐项实现。
 - **2025-02-07**: **CLI 命令差异、enableJob、Bedrock 支持** — 实现 cron add（--at、--deliver、--to、--channel）、cron enable、cron run、channels login；CronService.enableJob API；AWS Bedrock（@ai-sdk/amazon-bedrock、config.providers.bedrock、loader 路由）。Next Priorities 二至五全部完成。
 - **2025-02-07**: **AI SDK 与 Provider 对齐** — 更新 ai/@ai-sdk/* 至最新版本；重构 ai-sdk.ts（去除 any、正确类型、ModelMessage 转换）；对齐 nanobot：config 新增 zhipu、moonshot，loader 路由与回退顺序；ai-sdk 支持 Zhipu（zhipu-ai-provider）、Moonshot（createOpenAI + apiBase）、kimi-k2.5 强制 temperature=1.0；移除冗余 openai.ts；关闭 ESLint explicit-function-return-type。
-- **2025-02-07**: 实现 **gateway 命令**（gateway/index.ts、CLI `clawflow gateway start`）；启动 channels + heartbeat + cron + agent 的网关模式；任务 5 完成。
-- **2025-02-07**: Bonfire start → 实现 **bridge/**（BridgeServer、crossws、Baileys、config.bridge、CLI `clawflow bridge start`）；任务 4 完成。Session ended: 健康检查通过，无断链或孤立 spec/doc。
+- **2025-02-07**: 实现 **gateway 命令**（gateway/index.ts、CLI `nanobot-pm gateway start`）；启动 channels + heartbeat + cron + agent 的网关模式；任务 5 完成。
+- **2025-02-07**: Bonfire start → 实现 **bridge/**（BridgeServer、crossws、Baileys、config.bridge、CLI `nanobot-pm bridge start`）；任务 4 完成。Session ended: 健康检查通过，无断链或孤立 spec/doc。
 - **2025-02-07**: 实现 **heartbeat/**（HeartbeatService、config.heartbeat）、**providers/transcription**（GroqTranscriptionProvider、Telegram 语音转写）；任务 2、3 完成
 - **2025-02-07**: 实现 **channels/** 模块：base、manager、telegram、discord、feishu、whatsapp；config schema 增加 channels/gateway；CLI 增加 `channels status`
-- **2025-02-07**: Bonfire start；完成 nanobot vs clawflow 模块对比，整理未实现模块与实现差异清单，作为待办记入 Next Priorities
+- **2025-02-07**: Bonfire start；完成 nanobot vs nanobot-pm 模块对比，整理未实现模块与实现差异清单，作为待办记入 Next Priorities
 
 ---
 
@@ -50,13 +51,13 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 1. [x] **channels/** - base、manager、telegram、discord、feishu、whatsapp
 2. [x] **heartbeat/** - HeartbeatService
 3. [x] **providers/transcription** - GroqTranscriptionProvider
-4. [x] **bridge/** - crossws + Baileys，CLI: `clawflow bridge start`
-5. [x] **gateway** - `clawflow gateway start`
+4. [x] **bridge/** - crossws + Baileys，CLI: `nanobot-pm bridge start`
+5. [x] **gateway** - `nanobot-pm gateway start`
 
 ### 二、CLI 命令差异
 6. [x] **cron add** - 补齐 `--at`、`--deliver`、`--to`、`--channel`
-7. [x] **cron enable** - `clawflow cron enable <job_id> [--disable]`
-8. [x] **cron run** - `clawflow cron run <job_id> [--force]`
+7. [x] **cron enable** - `nanobot-pm cron enable <job_id> [--disable]`
+8. [x] **cron run** - `nanobot-pm cron run <job_id> [--force]`
 9. [x] **channels login** - WhatsApp 扫码（封装 bridge start）
 
 ### 三、CronService API
@@ -87,6 +88,11 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 ### 七、单元测试（test/）
 26. [x] **nanobot a/b 对照测试** — test/ 目录，shell/web/loader/helpers/context 等 mock 测试，114 用例，覆盖率 84%
 
+### 八、命名与约束（本会话完成）
+27. [x] **snake_case 统一** — 方法/函数/属性全部改为 snake_case，脚本 `scripts/snake-case-rename.mjs`
+28. [x] **文件命名** — agent/tools/cron.ts（与 nanobot cron.py 对齐）
+29. [x] **AGENTS.md** — 根目录 AI 约束（naming、file structure、syncing、verification）
+
 ---
 
 ## Key Resources
@@ -99,7 +105,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 - 配置加载: `packages/core/src/config/loader.ts`
 
 **External Links**:
-- [GitHub Repository](https://github.com/hairyf/clawflow)
+- [GitHub Repository](https://github.com/hairyf/nanobot-pm)
 - [nanobot skill](skills/nanobot/SKILL.md)
 
 ---
@@ -107,7 +113,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 ## Codemap
 
 **Entry Points**:
-- `pnpm start` / `clawflow` → `packages/core/bin/index.mjs`
+- `pnpm start` / `nanobot-pm` → `packages/core/bin/index.mjs`
 - CLI: `packages/core/src/cli/index.ts`
 
 **Core Components**:

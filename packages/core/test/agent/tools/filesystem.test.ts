@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/tools/filesystem ↔ nanobot agent/tools/filesystem.py
+ * A/B tests: nanobot-pm agent/tools/filesystem ↔ nanobot agent/tools/filesystem.py
  */
 
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
@@ -17,7 +17,7 @@ describe('filesystem tools (nanobot a/b)', () => {
   let dir: string
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'clawflow-fs-'))
+    dir = mkdtempSync(join(tmpdir(), 'nanobot-pm-fs-'))
     writeFileSync(join(dir, 'a.txt'), 'hello')
     mkdirSync(join(dir, 'subdir'), { recursive: true })
   })

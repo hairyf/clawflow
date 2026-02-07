@@ -166,7 +166,7 @@ export class TelegramChannel extends BaseChannel {
         return ''
       const buf = Buffer.from(await res.arrayBuffer())
       const ext = extensionForMedia(mediaType, mimeType)
-      const localPath = join(tmpdir(), `clawflow_${fileId.slice(0, 16)}${ext}`)
+      const localPath = join(tmpdir(), `nanobot-pm_${fileId.slice(0, 16)}${ext}`)
       writeFileSync(localPath, buf)
       try {
         if (this.transcriber) {

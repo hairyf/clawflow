@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/tools/shell ↔ nanobot agent/tools/shell.py
+ * A/B tests: nanobot-pm agent/tools/shell ↔ nanobot agent/tools/shell.py
  * Uses vi.mock to avoid real exec.
  */
 

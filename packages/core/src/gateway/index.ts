@@ -3,7 +3,7 @@
  * @see sources/nanobot/nanobot/cli/commands.py gateway()
  */
 
-import type { ClawflowConfig } from '../config/schema'
+import type { NanobotPmConfig } from '../config/schema'
 import type { CronJob } from '../cron/types'
 import { consola } from 'consola'
 import { AgentLoop } from '../agent/loop'
@@ -22,10 +22,10 @@ export interface GatewayController {
   stop: () => Promise<void>
 }
 
-export async function start_gateway(config: ClawflowConfig): Promise<GatewayController> {
+export async function start_gateway(config: NanobotPmConfig): Promise<GatewayController> {
   const apiKey = get_api_key(config)
   if (!apiKey) {
-    throw new Error('No API key configured. Set providers.openrouter.apiKey in ~/.clawflow/config.json')
+    throw new Error('No API key configured. Set providers.openrouter.apiKey in ~/.nanobot-pm/config.json')
   }
 
   const workspace = get_workspace_path_from_config(config)

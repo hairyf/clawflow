@@ -175,15 +175,15 @@ importers:
       bumpp:
         specifier: catalog:cli
         version: 10.4.0(magicast@0.5.2)
-      clawflow:
-        specifier: workspace:*
-        version: link:packages/core
       eslint:
         specifier: catalog:cli
         version: 9.39.2(jiti@2.6.1)
       lint-staged:
         specifier: catalog:cli
         version: 16.2.7
+      nanobot-pm:
+        specifier: workspace:*
+        version: link:packages/core
       publint:
         specifier: catalog:cli
         version: 0.3.16

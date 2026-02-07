@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/tools/message ↔ nanobot agent/tools/message.py
+ * A/B tests: nanobot-pm agent/tools/message ↔ nanobot agent/tools/message.py
  */
 
 import { describe, expect, it } from 'vitest'

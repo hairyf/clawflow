@@ -1,6 +1,6 @@
 # snake_case 重命名对照表
 
-用于 clawflow → nanobot 命名一致性，自动化重命名时按此表逐项替换。
+用于 nanobot-pm → nanobot 命名一致性，自动化重命名时按此表逐项替换。
 
 **注意**：每项替换时需用**整词匹配**，避免误替换子串（如 `addMessage` 不应匹配 `addMessageToQueue`）。
 

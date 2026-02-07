@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/tools/cron ↔ nanobot agent/tools/cron.py
+ * A/B tests: nanobot-pm agent/tools/cron ↔ nanobot agent/tools/cron.py
  */
 
 import { mkdtempSync, rmSync } from 'node:fs'
@@ -15,7 +15,7 @@ describe('cronTool (nanobot a/b)', () => {
   let tool: ReturnType<typeof cronTool>
 
   beforeEach(async () => {
-    storePath = join(mkdtempSync(join(tmpdir(), 'clawflow-cron-')), 'jobs.json')
+    storePath = join(mkdtempSync(join(tmpdir(), 'nanobot-pm-cron-')), 'jobs.json')
     service = new CronService(storePath)
     await service.start()
     tool = cronTool(service)

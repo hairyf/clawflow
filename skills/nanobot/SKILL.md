@@ -33,5 +33,5 @@
 ## 使用说明
 
 - 本 skill 的 `references/` 为 Agent 向文档，按「概念 + 代码片段 + 源码路径」组织。
-- 实现或对比 clawflow 与 nanobot 时，可优先读 Core 再按需查 Features/Advanced。
+- 实现或对比 nanobot-pm 与 nanobot 时，可优先读 Core 再按需查 Features/Advanced。
 - 源码以仓库 `sources/nanobot` 为准；上游: https://github.com/HKUDS/nanobot

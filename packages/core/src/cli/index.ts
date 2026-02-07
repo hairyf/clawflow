@@ -1,5 +1,5 @@
 /**
- * ClawFlow CLI (citty). Commands: onboard, agent, status, cron.
+ * Nanobot PM CLI (citty). Commands: onboard, agent, status, cron.
  */
 
 import type { CronSchedule } from '../cron/types'
@@ -22,8 +22,8 @@ const LOGO = '🐈'
 
 const main = defineCommand({
   meta: {
-    name: 'clawflow',
-    description: `${LOGO} ClawFlow - Personal AI Assistant`,
+    name: 'nanobot-pm',
+    description: `${LOGO} Nanobot PM - Personal AI Assistant`,
     version: '0.0.0',
   },
   args: {
@@ -51,7 +51,7 @@ const main = defineCommand({
         consola.success(`Workspace at ${workspace}`)
         const templates: Record<string, string> = {
           'AGENTS.md': '# Agent Instructions\n\nYou are a helpful AI assistant. Be concise and accurate.',
-          'SOUL.md': '# Soul\n\nI am ClawFlow, a lightweight AI assistant.',
+          'SOUL.md': '# Soul\n\nI am Nanobot PM, a lightweight AI assistant.',
           'USER.md': '# User\n\nUser preferences go here.',
         }
         for (const [name, content] of Object.entries(templates)) {
@@ -68,8 +68,8 @@ const main = defineCommand({
           writeFileSync(memory_file, '# Long-term Memory\n\n(Important facts and preferences)\n', 'utf-8')
           consola.log('  Created memory/MEMORY.md')
         }
-        consola.success(`${LOGO} ClawFlow is ready!`)
-        consola.info('Next: add API key to ~/.clawflow/config.json, then run: clawflow agent -m "Hello!"')
+        consola.success(`${LOGO} Nanobot PM is ready!`)
+        consola.info('Next: add API key to ~/.nanobot-pm/config.json, then run: nanobot-pm agent -m "Hello!"')
       },
     }),
     agent: defineCommand({
@@ -82,7 +82,7 @@ const main = defineCommand({
         const config = await load_config()
         const apiKey = get_api_key(config)
         if (!apiKey) {
-          consola.error('No API key configured. Set providers.openrouter.apiKey in ~/.clawflow/config.json')
+          consola.error('No API key configured. Set providers.openrouter.apiKey in ~/.nanobot-pm/config.json')
           process.exit(1)
         }
         const workspace = get_workspace_path_from_config(config)
@@ -134,7 +134,7 @@ const main = defineCommand({
         const config = await load_config()
         const workspace = get_workspace_path_from_config(config)
         const { existsSync } = await import('node:fs')
-        intro(`${LOGO} ClawFlow Status`)
+        intro(`${LOGO} Nanobot PM Status`)
         consola.log(`Config: ${configPath} ${existsSync(configPath) ? '✓' : '✗'}`)
         consola.log(`Workspace: ${workspace} ${existsSync(workspace) ? '✓' : '✗'}`)
         consola.log(`Model: ${config.agents?.defaults?.model ?? 'default'}`)
@@ -171,7 +171,7 @@ const main = defineCommand({
           meta: { description: 'WhatsApp: link device via QR code (starts bridge)' },
           async run() {
             const config = await load_config()
-            const bridgeConfig = config.bridge ?? { port: 3001, authDir: '~/.clawflow/whatsapp-auth' }
+            const bridgeConfig = config.bridge ?? { port: 3001, authDir: '~/.nanobot-pm/whatsapp-auth' }
             consola.info(`${LOGO} Starting WhatsApp bridge...`)
             consola.info('Scan the QR code to connect.\n')
             const server = await start_bridge(bridgeConfig)
@@ -195,7 +195,7 @@ const main = defineCommand({
           meta: { description: 'Start bridge server for WhatsApp channel' },
           async run() {
             const config = await load_config()
-            const bridgeConfig = config.bridge ?? { port: 3001, authDir: '~/.clawflow/whatsapp-auth' }
+            const bridgeConfig = config.bridge ?? { port: 3001, authDir: '~/.nanobot-pm/whatsapp-auth' }
             consola.info(`${LOGO} Starting WhatsApp bridge on port ${bridgeConfig.port ?? 3001}...`)
             const server = await start_bridge(bridgeConfig)
             process.on('SIGINT', async () => {
@@ -306,7 +306,7 @@ const main = defineCommand({
           async run({ args }) {
             const id = (args._?.[0] ?? args.jobId) as string
             if (!id) {
-              consola.error('Usage: clawflow cron remove <job_id>')
+              consola.error('Usage: nanobot-pm cron remove <job_id>')
               process.exit(1)
             }
             const service = new CronService(get_cron_store_path())
@@ -325,7 +325,7 @@ const main = defineCommand({
           async run({ args }) {
             const id = (args._?.[0] ?? args.jobId) as string
             if (!id) {
-              consola.error('Usage: clawflow cron enable <job_id> [--disable]')
+              consola.error('Usage: nanobot-pm cron enable <job_id> [--disable]')
               process.exit(1)
             }
             const service = new CronService(get_cron_store_path())
@@ -345,13 +345,13 @@ const main = defineCommand({
           async run({ args }) {
             const id = (args._?.[0] ?? args.jobId) as string
             if (!id) {
-              consola.error('Usage: clawflow cron run <job_id> [--force]')
+              consola.error('Usage: nanobot-pm cron run <job_id> [--force]')
               process.exit(1)
             }
             const config = await load_config()
             const apiKey = get_api_key(config)
             if (!apiKey) {
-              consola.error('No API key configured. Run clawflow onboard and set API key in config.')
+              consola.error('No API key configured. Run nanobot-pm onboard and set API key in config.')
               process.exit(1)
             }
             const workspace = get_workspace_path_from_config(config)

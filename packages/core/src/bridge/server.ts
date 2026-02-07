@@ -65,7 +65,7 @@ export class BridgeServer {
 
     this.httpServer = createServer((_req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/plain' })
-      res.end('ClawFlow WhatsApp Bridge. Connect via WebSocket.')
+      res.end('Nanobot PM WhatsApp Bridge. Connect via WebSocket.')
     })
 
     this.httpServer.on('upgrade', (req: IncomingMessage, socket: Duplex, head: Buffer) => {

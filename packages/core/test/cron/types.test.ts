@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow cron/types ↔ nanobot cron/types.py
+ * A/B tests: nanobot-pm cron/types ↔ nanobot cron/types.py
  */
 
 import type { CronPayload, CronSchedule } from '../../src/cron/types'

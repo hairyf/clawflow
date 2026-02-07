@@ -48,7 +48,7 @@ export class WhatsAppClient {
       version,
       logger,
       printQRInTerminal: false,
-      browser: ['clawflow', 'bridge', VERSION],
+      browser: ['nanobot-pm', 'bridge', VERSION],
       syncFullHistory: false,
       markOnlineOnConnect: false,
     })

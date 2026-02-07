@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow cron/service ↔ nanobot cron/service.py
+ * A/B tests: nanobot-pm cron/service ↔ nanobot cron/service.py
  */
 
 import { mkdtempSync, rmSync } from 'node:fs'
@@ -12,7 +12,7 @@ describe('cronService (nanobot a/b)', () => {
   let storePath: string
 
   beforeEach(() => {
-    storePath = join(mkdtempSync(join(tmpdir(), 'clawflow-cron-')), 'jobs.json')
+    storePath = join(mkdtempSync(join(tmpdir(), 'nanobot-pm-cron-')), 'jobs.json')
   })
 
   afterEach(() => {

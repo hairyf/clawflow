@@ -4,7 +4,7 @@
  */
 
 import type { MessageBus } from '../bus/queue'
-import type { ClawflowConfig } from '../config/schema'
+import type { NanobotPmConfig } from '../config/schema'
 import type { BaseChannel } from './base'
 import { consola } from 'consola'
 
@@ -15,7 +15,7 @@ export class ChannelManager {
   private _channelsReady = false
 
   constructor(
-    private config: ClawflowConfig,
+    private config: NanobotPmConfig,
     private bus: MessageBus,
   ) {}
 

@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow config/schema ↔ nanobot config/schema.py
+ * A/B tests: nanobot-pm config/schema ↔ nanobot config/schema.py
  */
 
 import { describe, expect, it } from 'vitest'

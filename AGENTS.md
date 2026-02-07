@@ -1,4 +1,4 @@
-# Clawflow AI Agent Constraints
+# Nanobot PM AI Agent Constraints
 
 When adding new features or syncing with nanobot, follow these rules.
 
@@ -17,12 +17,12 @@ When adding new features or syncing with nanobot, follow these rules.
 
 ## 2. File Structure
 
-- **Mapping**: Follow `.bonfire/specs/code-file-mapping.md` for nanobot ↔ clawflow file correspondence.
+- **Mapping**: Follow `.bonfire/specs/code-file-mapping.md` for nanobot ↔ nanobot-pm file correspondence.
 - **New modules**: Place code in the mapped directory (e.g., `agent/tools/`, `cron/`, `session/`).
-- **Clawflow-only modules**: `bridge/`, `gateway/` have no nanobot equivalent; extend as needed.
+- **Nanobot PM–only modules**: `bridge/`, `gateway/` have no nanobot equivalent; extend as needed.
 
 ---
-
+nanobot-pm-engineerin
 ## 3. Syncing with Nanobot
 
 - **Reference source**: `sources/nanobot/nanobot/` (Python)
@@ -43,10 +43,10 @@ When adding new features or syncing with nanobot, follow these rules.
 
 ## 5. Acceptable Differences
 
-- **LLM provider**: nanobot uses LiteLLM; clawflow uses `@ai-sdk/*` multi-provider.
+- **LLM provider**: nanobot uses LiteLLM; nanobot-pm uses `@ai-sdk/*` multi-provider.
 - **Types**: TypeScript interfaces vs Python dataclasses.
 - **Async model**: `setImmediate` + Promise vs `asyncio.create_task`.
-- **Branding**: ClawFlow vs nanobot in user-facing strings.
+- **Branding**: Nanobot PM vs nanobot in user-facing strings.
 
 ---
 

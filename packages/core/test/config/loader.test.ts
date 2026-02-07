@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow config/loader ↔ nanobot config/loader.py
+ * A/B tests: nanobot-pm config/loader ↔ nanobot config/loader.py
  */
 
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
@@ -13,7 +13,7 @@ describe('config/loader (nanobot a/b)', () => {
   let tmpDir: string
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'clawflow-cfg-'))
+    tmpDir = mkdtempSync(join(tmpdir(), 'nanobot-pm-cfg-'))
   })
 
   afterEach(() => {

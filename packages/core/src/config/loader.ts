@@ -1,9 +1,9 @@
 /**
- * Load config with defu. Config file: ~/.clawflow/config.json
+ * Load config with defu. Config file: ~/.nanobot-pm/config.json
  * @see sources/nanobot/nanobot/config/loader.py
  */
 
-import type { ClawflowConfig } from './schema'
+import type { NanobotPmConfig } from './schema'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import process from 'node:process'
@@ -28,22 +28,22 @@ export function migrate_config(data: Record<string, unknown>): Record<string, un
   return data
 }
 
-export async function load_config(overridePath?: string): Promise<ClawflowConfig> {
+export async function load_config(overridePath?: string): Promise<NanobotPmConfig> {
   const path = overridePath ?? get_config_path()
   if (existsSync(path)) {
     try {
       const raw = readFileSync(path, 'utf-8')
-      const data = migrate_config(JSON.parse(raw) as Record<string, unknown>) as ClawflowConfig
-      return defu(data, defaultConfig) as ClawflowConfig
+      const data = migrate_config(JSON.parse(raw) as Record<string, unknown>) as NanobotPmConfig
+      return defu(data, defaultConfig) as NanobotPmConfig
     }
     catch (e) {
       console.warn(`Failed to load config from ${path}:`, e)
     }
   }
-  return defu({}, defaultConfig) as ClawflowConfig
+  return defu({}, defaultConfig) as NanobotPmConfig
 }
 
-export function save_config(config: ClawflowConfig, overridePath?: string): void {
+export function save_config(config: NanobotPmConfig, overridePath?: string): void {
   const path = overridePath ?? get_config_path()
   const dir = dirname(path)
   if (!existsSync(dir))
@@ -52,14 +52,14 @@ export function save_config(config: ClawflowConfig, overridePath?: string): void
 }
 
 /** Resolve workspace absolute path from config */
-export function get_workspace_path_from_config(config: ClawflowConfig): string {
+export function get_workspace_path_from_config(config: NanobotPmConfig): string {
   const w = config.agents?.defaults?.workspace ?? defaultConfig.agents!.defaults!.workspace
   const expanded = w?.startsWith('~') ? w.replace('~', homedir()) : w ?? ''
   return resolve(expanded)
 }
 
 /** Match provider by model name (align nanobot config._match_provider) */
-function match_provider_by_model(config: ClawflowConfig, model?: string): { apiKey?: string, apiBase?: string } | undefined {
+function match_provider_by_model(config: NanobotPmConfig, model?: string): { apiKey?: string, apiBase?: string } | undefined {
   const providers = config.providers ?? {}
   const m = (model ?? config.agents?.defaults?.model ?? '').toLowerCase()
   const match = (p: typeof providers.openrouter) => p?.apiKey ? p : undefined
@@ -91,7 +91,7 @@ function match_provider_by_model(config: ClawflowConfig, model?: string): { apiK
 }
 
 /** Get API key (first available provider, or by model when specified) */
-export function get_api_key(config: ClawflowConfig, model?: string): string | undefined {
+export function get_api_key(config: NanobotPmConfig, model?: string): string | undefined {
   const matched = match_provider_by_model(config, model)
   if (matched?.apiKey)
     return matched.apiKey
@@ -118,7 +118,7 @@ export function get_api_key(config: ClawflowConfig, model?: string): string | un
 }
 
 /** Get API base for OpenRouter / vLLM etc. (by model) */
-export function get_api_base(config: ClawflowConfig, model?: string): string | undefined {
+export function get_api_base(config: NanobotPmConfig, model?: string): string | undefined {
   const matched = match_provider_by_model(config, model)
   if (matched?.apiBase)
     return matched.apiBase

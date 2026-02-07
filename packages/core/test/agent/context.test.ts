@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/context ↔ nanobot agent/context.py
+ * A/B tests: nanobot-pm agent/context ↔ nanobot agent/context.py
  */
 
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
@@ -12,7 +12,7 @@ describe('contextBuilder (nanobot a/b)', () => {
   let workspace: string
 
   beforeEach(() => {
-    workspace = mkdtempSync(join(tmpdir(), 'clawflow-context-'))
+    workspace = mkdtempSync(join(tmpdir(), 'nanobot-pm-context-'))
     mkdirSync(join(workspace, 'memory'), { recursive: true })
   })
 
@@ -23,7 +23,7 @@ describe('contextBuilder (nanobot a/b)', () => {
   it('buildSystemPrompt includes workspace and runtime', () => {
     const ctx = new ContextBuilder(workspace)
     const prompt = ctx.buildSystemPrompt()
-    expect(prompt).toContain('ClawFlow')
+    expect(prompt).toContain('Nanobot PM')
     expect(prompt).toContain(workspace)
     expect(prompt).toContain('memory')
     expect(prompt).toContain('Memory')

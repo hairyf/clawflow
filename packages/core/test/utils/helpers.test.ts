@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow utils/helpers ↔ nanobot utils/helpers.py
+ * A/B tests: nanobot-pm utils/helpers ↔ nanobot utils/helpers.py
  * Reference: sources/nanobot/nanobot/utils/helpers.py
  */
 

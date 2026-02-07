@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/subagent ↔ nanobot agent/subagent.py
+ * A/B tests: nanobot-pm agent/subagent ↔ nanobot agent/subagent.py
  */
 
 import type { LLMProvider } from '../../src/providers/base'

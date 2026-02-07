@@ -1,18 +1,18 @@
 # 文件命名对照表
 
 **nanobot**: `sources/nanobot/nanobot/` (Python，snake_case)
-**clawflow**: `packages/core/src/` (TypeScript)
+**nanobot-pm**: `packages/core/src/` (TypeScript)
 
 ---
 
 ## 一、一一对应（命名风格不同）
 
-| nanobot | clawflow | 差异 |
+| nanobot | nanobot-pm | 差异 |
 |---------|----------|------|
 | agent/tools/cron.py | agent/tools/cron.ts | 一致 |
 | providers/litellm_provider.py | providers/ai-sdk.ts | `litellm_provider` vs `ai-sdk`（实现不同） |
 | cli/commands.py | cli/index.ts | `commands` vs `index`（入口习惯） |
-| heartbeat/service.py | heartbeat/service.ts | 一致；clawflow 多 index.ts 导出 |
+| heartbeat/service.py | heartbeat/service.ts | 一致；nanobot-pm 多 index.ts 导出 |
 
 ---
 
@@ -51,9 +51,9 @@
 
 ---
 
-## 三、clawflow 独有
+## 三、nanobot-pm 独有
 
-| clawflow | 说明 |
+| nanobot-pm | 说明 |
 |----------|------|
 | agent/*.test.ts | 单元测试 |
 | channels/index.ts | 统一导出 |
@@ -66,7 +66,7 @@
 
 ## 四、命名风格汇总
 
-| 维度 | nanobot | clawflow |
+| 维度 | nanobot | nanobot-pm |
 |------|---------|----------|
 | 文件名校验 | snake_case（litellm_provider.py） | kebab-case（ai-sdk.ts）；cron.ts 已与 nanobot 对齐 |
 | 模块入口 | __init__.py | index.ts |

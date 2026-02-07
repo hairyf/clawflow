@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow bus/queue ↔ nanobot bus/queue.py
+ * A/B tests: nanobot-pm bus/queue ↔ nanobot bus/queue.py
  */
 
 import type { InboundMessage, OutboundMessage } from '../../src/bus/events'

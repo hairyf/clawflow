@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/skills ↔ nanobot agent/skills.py
+ * A/B tests: nanobot-pm agent/skills ↔ nanobot agent/skills.py
  */
 
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
@@ -12,7 +12,7 @@ describe('skillsLoader (nanobot a/b)', () => {
   let workspace: string
 
   beforeEach(() => {
-    workspace = mkdtempSync(join(tmpdir(), 'clawflow-skills-'))
+    workspace = mkdtempSync(join(tmpdir(), 'nanobot-pm-skills-'))
     mkdirSync(join(workspace, 'skills', 'foo'), { recursive: true })
     writeFileSync(join(workspace, 'skills', 'foo', 'SKILL.md'), `---
 description: Foo skill

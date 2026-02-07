@@ -1,5 +1,5 @@
 {
-  "name": "clawflow-monorepo",
+  "name": "nanobot-pm-monorepo",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.25.0",
@@ -7,12 +7,12 @@
   "author": "Hairyf <wwu710632@gmail.com>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/hairyf",
-  "homepage": "https://github.com/hairyf/clawflow#readme",
+  "homepage": "https://github.com/hairyf/nanobot-pm#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hairyf/clawflow.git"
+    "url": "git+https://github.com/hairyf/nanobot-pm.git"
   },
-  "bugs": "https://github.com/hairyf/clawflow/issues",
+  "bugs": "https://github.com/hairyf/nanobot-pm/issues",
   "keywords": [],
   "scripts": {
     "build": "pnpm -r run build",
@@ -20,7 +20,7 @@
     "lint": "eslint .",
     "prepublishOnly": "nr build",
     "release": "bumpp",
-    "start": "pnpm exec clawflow",
+    "start": "pnpm exec nanobot-pm",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "typecheck": "pnpm -r run typecheck",
@@ -33,9 +33,9 @@
     "@types/node": "catalog:types",
     "@vitest/coverage-v8": "catalog:",
     "bumpp": "catalog:cli",
-    "clawflow": "workspace:*",
     "eslint": "catalog:cli",
     "lint-staged": "catalog:cli",
+    "nanobot-pm": "workspace:*",
     "publint": "catalog:cli",
     "simple-git-hooks": "catalog:cli",
     "skills": "catalog:skills",

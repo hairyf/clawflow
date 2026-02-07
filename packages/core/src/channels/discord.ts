@@ -112,7 +112,7 @@ export class DiscordChannel extends BaseChannel {
       d: {
         token: this.config.token,
         intents: this.config.intents ?? 37377,
-        properties: { os: 'clawflow', browser: 'clawflow', device: 'clawflow' },
+        properties: { os: 'nanobot-pm', browser: 'nanobot-pm', device: 'nanobot-pm' },
       },
     }))
   }

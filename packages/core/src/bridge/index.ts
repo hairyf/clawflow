@@ -27,7 +27,7 @@ function resolveAuthDir(authDir: string): string {
 /** Start bridge server (used by CLI and gateway). */
 export async function start_bridge(config: BridgeConfig): Promise<BridgeServer> {
   const port = config.port ?? 3001
-  const authDir = resolveAuthDir(config.authDir ?? '~/.clawflow/whatsapp-auth')
+  const authDir = resolveAuthDir(config.authDir ?? '~/.nanobot-pm/whatsapp-auth')
   const server = new BridgeServer({ port, authDir })
   await server.start()
   return server

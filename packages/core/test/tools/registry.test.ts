@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow ToolRegistry ↔ nanobot agent/tools/registry.py
+ * A/B tests: nanobot-pm ToolRegistry ↔ nanobot agent/tools/registry.py
  * Reference: sources/nanobot/tests/test_tool_validation.py test_registry_returns_validation_error
  */
 

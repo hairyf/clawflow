@@ -42,9 +42,9 @@ export class ContextBuilder {
     const parts: string[] = []
     const now = new Date().toLocaleString('en-CA', { weekday: 'long' })
     const runtime = get_runtime_info()
-    parts.push(`# ClawFlow
+    parts.push(`# Nanobot PM
 
-You are ClawFlow, a helpful AI assistant. You have access to tools to:
+You are Nanobot PM, a helpful AI assistant. You have access to tools to:
 - Read, write, and edit files
 - Execute shell commands
 - Search the web and fetch pages

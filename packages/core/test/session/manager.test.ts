@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow session/manager ↔ nanobot session/manager.py
+ * A/B tests: nanobot-pm session/manager ↔ nanobot session/manager.py
  */
 
 import { mkdirSync, mkdtempSync, rmSync } from 'node:fs'
@@ -12,7 +12,7 @@ describe('sessionManager (nanobot a/b)', () => {
   let sessions_dir: string
 
   beforeEach(() => {
-    sessions_dir = mkdtempSync(join(tmpdir(), 'clawflow-sessions-'))
+    sessions_dir = mkdtempSync(join(tmpdir(), 'nanobot-pm-sessions-'))
     mkdirSync(sessions_dir, { recursive: true })
   })
 

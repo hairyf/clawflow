@@ -1,5 +1,5 @@
 /**
- * A/B tests: clawflow agent/memory ↔ nanobot agent/memory.py
+ * A/B tests: nanobot-pm agent/memory ↔ nanobot agent/memory.py
  */
 
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
@@ -12,7 +12,7 @@ describe('memoryStore (nanobot a/b)', () => {
   let workspace: string
 
   beforeEach(() => {
-    workspace = mkdtempSync(join(tmpdir(), 'clawflow-memory-'))
+    workspace = mkdtempSync(join(tmpdir(), 'nanobot-pm-memory-'))
     mkdirSync(join(workspace, 'memory'), { recursive: true })
   })
 
