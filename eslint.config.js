@@ -8,6 +8,8 @@ export default antfu(
     ignores: [
       '**/skills/**',
       '**/sources/**',
+      '.swarm/**',
+      'src',
     ],
   },
 )

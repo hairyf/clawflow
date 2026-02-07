@@ -1,7 +1,7 @@
 {
-  "name": "clawflow",
+  "name": "clawflow-monorepo",
   "type": "module",
-  "version": "0.0.0",
+  "private": true,
   "packageManager": "pnpm@10.25.0",
   "description": "_description_",
   "author": "Hairyf <wwu710632@gmail.com>",
@@ -14,43 +14,16 @@
   },
   "bugs": "https://github.com/hairyf/clawflow/issues",
   "keywords": [],
-  "sideEffects": false,
-  "main": "./src/index.ts",
-  "publishConfig": {
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs"
-      },
-      "./package.json": "./package.json"
-    },
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "bin": {
-      "clawflow": "./bin/index.mjs"
-    }
-  },
-  "bin": {
-    "clawflow": "./bin/index.dev.mjs"
-  },
-  "files": [
-    "bin",
-    "dist"
-  ],
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
-    "lint": "eslint",
+    "build": "pnpm -r run build",
+    "dev": "pnpm -r run dev",
+    "lint": "eslint .",
     "prepublishOnly": "nr build",
     "release": "bumpp",
-    "start": "tsx src/index.ts",
+    "start": "pnpm exec clawflow",
     "test": "vitest",
-    "typecheck": "tsc",
+    "typecheck": "pnpm -r run typecheck",
     "prepare": "simple-git-hooks && skills-manifest install"
-  },
-  "dependencies": {
-    "commander": "catalog:"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",

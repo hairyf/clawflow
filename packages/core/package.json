@@ -1,0 +1,52 @@
+{
+  "name": "clawflow",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "ClawFlow CLI and core",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "bin": {
+    "clawflow": "./bin/index.dev.mjs"
+  },
+  "files": ["bin", "dist"],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "start": "tsx src/index.ts",
+    "prepublishOnly": "pnpm build",
+    "test": "vitest",
+    "typecheck": "tsc",
+    "lint": "eslint ."
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "import": "./dist/index.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "bin": {
+      "clawflow": "./bin/index.mjs"
+    }
+  },
+  "dependencies": {
+    "commander": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:types",
+    "tsdown": "catalog:cli",
+    "tsx": "catalog:cli",
+    "typescript": "catalog:cli",
+    "vitest": "catalog:testing"
+  }
+}
