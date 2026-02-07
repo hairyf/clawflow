@@ -25,7 +25,8 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
-- **2025-02-07** (本会话): **AI SDK 与 Provider 对齐** — 更新 ai/@ai-sdk/* 至最新版本；重构 ai-sdk.ts（去除 any、正确类型、ModelMessage 转换）；对齐 nanobot：config 新增 zhipu、moonshot，loader 路由与回退顺序；ai-sdk 支持 Zhipu（zhipu-ai-provider）、Moonshot（createOpenAI + apiBase）、kimi-k2.5 强制 temperature=1.0；移除冗余 openai.ts；关闭 ESLint explicit-function-return-type。
+- **2025-02-07** (本会话): **CLI 命令差异、enableJob、Bedrock 支持** — 实现 cron add（--at、--deliver、--to、--channel）、cron enable、cron run、channels login；CronService.enableJob API；AWS Bedrock（@ai-sdk/amazon-bedrock、config.providers.bedrock、loader 路由）。Next Priorities 二至五全部完成。
+- **2025-02-07**: **AI SDK 与 Provider 对齐** — 更新 ai/@ai-sdk/* 至最新版本；重构 ai-sdk.ts（去除 any、正确类型、ModelMessage 转换）；对齐 nanobot：config 新增 zhipu、moonshot，loader 路由与回退顺序；ai-sdk 支持 Zhipu（zhipu-ai-provider）、Moonshot（createOpenAI + apiBase）、kimi-k2.5 强制 temperature=1.0；移除冗余 openai.ts；关闭 ESLint explicit-function-return-type。
 - **2025-02-07**: 实现 **gateway 命令**（gateway/index.ts、CLI `clawflow gateway start`）；启动 channels + heartbeat + cron + agent 的网关模式；任务 5 完成。
 - **2025-02-07**: Bonfire start → 实现 **bridge/**（BridgeServer、crossws、Baileys、config.bridge、CLI `clawflow bridge start`）；任务 4 完成。Session ended: 健康检查通过，无断链或孤立 spec/doc。
 - **2025-02-07**: 实现 **heartbeat/**（HeartbeatService、config.heartbeat）、**providers/transcription**（GroqTranscriptionProvider、Telegram 语音转写）；任务 2、3 完成
