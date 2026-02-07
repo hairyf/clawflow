@@ -9,14 +9,14 @@ import { homedir } from 'node:os'
 import process from 'node:process'
 import { defu } from 'defu'
 import { dirname, resolve } from 'pathe'
-import { getConfigPath } from '../utils/helpers'
+import { get_config_path } from '../utils/helpers'
 import { defaultConfig } from './schema'
 
 /**
  * Migrate old config keys to current schema (align nanobot _migrate_config).
  * e.g. tools.exec.restrictToWorkspace → tools.restrictToWorkspace
  */
-export function migrateConfig(data: Record<string, unknown>): Record<string, unknown> {
+export function migrate_config(data: Record<string, unknown>): Record<string, unknown> {
   const tools = data.tools as Record<string, unknown> | undefined
   if (!tools)
     return data
@@ -28,12 +28,12 @@ export function migrateConfig(data: Record<string, unknown>): Record<string, unk
   return data
 }
 
-export async function loadConfig(overridePath?: string): Promise<ClawflowConfig> {
-  const path = overridePath ?? getConfigPath()
+export async function load_config(overridePath?: string): Promise<ClawflowConfig> {
+  const path = overridePath ?? get_config_path()
   if (existsSync(path)) {
     try {
       const raw = readFileSync(path, 'utf-8')
-      const data = migrateConfig(JSON.parse(raw) as Record<string, unknown>) as ClawflowConfig
+      const data = migrate_config(JSON.parse(raw) as Record<string, unknown>) as ClawflowConfig
       return defu(data, defaultConfig) as ClawflowConfig
     }
     catch (e) {
@@ -43,8 +43,8 @@ export async function loadConfig(overridePath?: string): Promise<ClawflowConfig>
   return defu({}, defaultConfig) as ClawflowConfig
 }
 
-export function saveConfig(config: ClawflowConfig, overridePath?: string): void {
-  const path = overridePath ?? getConfigPath()
+export function save_config(config: ClawflowConfig, overridePath?: string): void {
+  const path = overridePath ?? get_config_path()
   const dir = dirname(path)
   if (!existsSync(dir))
     mkdirSync(dir, { recursive: true })
@@ -52,14 +52,14 @@ export function saveConfig(config: ClawflowConfig, overridePath?: string): void 
 }
 
 /** Resolve workspace absolute path from config */
-export function getWorkspacePathFromConfig(config: ClawflowConfig): string {
+export function get_workspace_path_from_config(config: ClawflowConfig): string {
   const w = config.agents?.defaults?.workspace ?? defaultConfig.agents!.defaults!.workspace
   const expanded = w?.startsWith('~') ? w.replace('~', homedir()) : w ?? ''
   return resolve(expanded)
 }
 
 /** Match provider by model name (align nanobot config._match_provider) */
-function matchProviderByModel(config: ClawflowConfig, model?: string): { apiKey?: string, apiBase?: string } | undefined {
+function match_provider_by_model(config: ClawflowConfig, model?: string): { apiKey?: string, apiBase?: string } | undefined {
   const providers = config.providers ?? {}
   const m = (model ?? config.agents?.defaults?.model ?? '').toLowerCase()
   const match = (p: typeof providers.openrouter) => p?.apiKey ? p : undefined
@@ -91,8 +91,8 @@ function matchProviderByModel(config: ClawflowConfig, model?: string): { apiKey?
 }
 
 /** Get API key (first available provider, or by model when specified) */
-export function getApiKey(config: ClawflowConfig, model?: string): string | undefined {
-  const matched = matchProviderByModel(config, model)
+export function get_api_key(config: ClawflowConfig, model?: string): string | undefined {
+  const matched = match_provider_by_model(config, model)
   if (matched?.apiKey)
     return matched.apiKey
   const providers = config.providers ?? {}
@@ -118,8 +118,8 @@ export function getApiKey(config: ClawflowConfig, model?: string): string | unde
 }
 
 /** Get API base for OpenRouter / vLLM etc. (by model) */
-export function getApiBase(config: ClawflowConfig, model?: string): string | undefined {
-  const matched = matchProviderByModel(config, model)
+export function get_api_base(config: ClawflowConfig, model?: string): string | undefined {
+  const matched = match_provider_by_model(config, model)
   if (matched?.apiBase)
     return matched.apiBase
   const modelLower = (model ?? config.agents?.defaults?.model ?? '').toLowerCase()

@@ -7,14 +7,14 @@ import type { Tool } from './base'
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'pathe'
 
-function resolvePath(path: string, allowedDir?: string | null): string {
+function resolvePath(path: string, allowed_dir?: string | null): string {
   const resolved = resolve(path)
-  if (allowedDir && !resolved.startsWith(resolve(allowedDir)))
-    throw new Error(`Path ${path} is outside allowed directory ${allowedDir}`)
+  if (allowed_dir && !resolved.startsWith(resolve(allowed_dir)))
+    throw new Error(`Path ${path} is outside allowed directory ${allowed_dir}`)
   return resolved
 }
 
-function createFileTool(allowedDir: string | null): Tool {
+function createFileTool(allowed_dir: string | null): Tool {
   return {
     name: 'read_file',
     description: 'Read the contents of a file at the given path.',
@@ -25,7 +25,7 @@ function createFileTool(allowedDir: string | null): Tool {
     },
     async execute({ path }: Record<string, unknown>) {
       try {
-        const p = resolvePath(String(path), allowedDir)
+        const p = resolvePath(String(path), allowed_dir)
         if (!existsSync(p))
           return `Error: File not found: ${path}`
         return readFileSync(p, 'utf-8')
@@ -37,7 +37,7 @@ function createFileTool(allowedDir: string | null): Tool {
   }
 }
 
-function createWriteFileTool(allowedDir: string | null): Tool {
+function createWriteFileTool(allowed_dir: string | null): Tool {
   return {
     name: 'write_file',
     description: 'Write content to a file. Creates parent directories if needed.',
@@ -51,7 +51,7 @@ function createWriteFileTool(allowedDir: string | null): Tool {
     },
     async execute({ path, content }: Record<string, unknown>) {
       try {
-        const p = resolvePath(String(path), allowedDir)
+        const p = resolvePath(String(path), allowed_dir)
         mkdirSync(dirname(p), { recursive: true })
         writeFileSync(p, String(content), 'utf-8')
         return `Successfully wrote ${String(content).length} bytes to ${path}`
@@ -63,7 +63,7 @@ function createWriteFileTool(allowedDir: string | null): Tool {
   }
 }
 
-function createEditFileTool(allowedDir: string | null): Tool {
+function createEditFileTool(allowed_dir: string | null): Tool {
   return {
     name: 'edit_file',
     description: 'Edit a file by replacing old_text with new_text. The old_text must exist exactly.',
@@ -78,7 +78,7 @@ function createEditFileTool(allowedDir: string | null): Tool {
     },
     async execute({ path, old_text, new_text }: Record<string, unknown>) {
       try {
-        const p = resolvePath(String(path), allowedDir)
+        const p = resolvePath(String(path), allowed_dir)
         if (!existsSync(p))
           return `Error: File not found: ${path}`
         const content = readFileSync(p, 'utf-8')
@@ -102,7 +102,7 @@ function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-function createListDirTool(allowedDir: string | null): Tool {
+function createListDirTool(allowed_dir: string | null): Tool {
   return {
     name: 'list_dir',
     description: 'List the contents of a directory.',
@@ -113,7 +113,7 @@ function createListDirTool(allowedDir: string | null): Tool {
     },
     async execute({ path }: Record<string, unknown>) {
       try {
-        const p = resolvePath(String(path), allowedDir)
+        const p = resolvePath(String(path), allowed_dir)
         if (!existsSync(p))
           return `Error: Directory not found: ${path}`
         const names = readdirSync(p)
@@ -131,18 +131,18 @@ function createListDirTool(allowedDir: string | null): Tool {
   }
 }
 
-export function readFileTool(allowedDir?: string | null): Tool {
-  return createFileTool(allowedDir ?? null)
+export function readFileTool(allowed_dir?: string | null): Tool {
+  return createFileTool(allowed_dir ?? null)
 }
 
-export function writeFileTool(allowedDir?: string | null): Tool {
-  return createWriteFileTool(allowedDir ?? null)
+export function writeFileTool(allowed_dir?: string | null): Tool {
+  return createWriteFileTool(allowed_dir ?? null)
 }
 
-export function editFileTool(allowedDir?: string | null): Tool {
-  return createEditFileTool(allowedDir ?? null)
+export function editFileTool(allowed_dir?: string | null): Tool {
+  return createEditFileTool(allowed_dir ?? null)
 }
 
-export function listDirTool(allowedDir?: string | null): Tool {
-  return createListDirTool(allowedDir ?? null)
+export function listDirTool(allowed_dir?: string | null): Tool {
+  return createListDirTool(allowed_dir ?? null)
 }

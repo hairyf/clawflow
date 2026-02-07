@@ -5,7 +5,7 @@
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'pathe'
-import { getSessionsPath, safeFilename } from '../utils/helpers'
+import { get_sessions_path, safe_filename } from '../utils/helpers'
 
 export interface SessionMessage {
   role: string
@@ -17,8 +17,8 @@ export interface SessionMessage {
 export interface Session {
   key: string
   messages: SessionMessage[]
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
   metadata: Record<string, unknown>
 }
 
@@ -27,19 +27,20 @@ function nowIso(): string {
 }
 
 export class SessionManager {
-  private sessionsDir: string
+  private sessions_dir: string
   private cache = new Map<string, Session>()
 
-  constructor(_workspace?: string) {
-    this.sessionsDir = getSessionsPath()
+  /** @param _workspace unused, kept for API compatibility. @param sessions_dir override for testing. */
+  constructor(_workspace?: string, sessions_dir?: string) {
+    this.sessions_dir = sessions_dir ?? get_sessions_path()
   }
 
   private sessionPath(key: string): string {
-    const safe = safeFilename(key.replace(':', '_'))
-    return join(this.sessionsDir, `${safe}.jsonl`)
+    const safe = safe_filename(key.replace(':', '_'))
+    return join(this.sessions_dir, `${safe}.jsonl`)
   }
 
-  getOrCreate(key: string): Session {
+  get_or_create(key: string): Session {
     const cached = this.cache.get(key)
     if (cached)
       return cached
@@ -47,8 +48,8 @@ export class SessionManager {
     const session: Session = loaded ?? {
       key,
       messages: [],
-      createdAt: nowIso(),
-      updatedAt: nowIso(),
+      created_at: nowIso(),
+      updated_at: nowIso(),
       metadata: {},
     }
     this.cache.set(key, session)
@@ -63,12 +64,12 @@ export class SessionManager {
       const lines = readFileSync(path, 'utf-8').split('\n').filter(Boolean)
       const messages: SessionMessage[] = []
       let metadata: Record<string, unknown> = {}
-      let createdAt = nowIso()
+      let created_at = nowIso()
       for (const line of lines) {
         const data = JSON.parse(line) as Record<string, unknown>
         if (data._type === 'metadata') {
           metadata = (data.metadata as Record<string, unknown>) ?? {}
-          createdAt = (data.created_at as string) ?? createdAt
+          created_at = (data.created_at as string) ?? created_at
         }
         else {
           messages.push(data as SessionMessage)
@@ -77,8 +78,8 @@ export class SessionManager {
       return {
         key,
         messages,
-        createdAt,
-        updatedAt: nowIso(),
+        created_at,
+        updated_at: nowIso(),
         metadata,
       }
     }
@@ -87,13 +88,13 @@ export class SessionManager {
     }
   }
 
-  addMessage(session: Session, role: string, content: string): void {
+  add_message(session: Session, role: string, content: string): void {
     session.messages.push({
       role,
       content,
       timestamp: nowIso(),
     })
-    session.updatedAt = nowIso()
+    session.updated_at = nowIso()
   }
 
   getHistory(session: Session, maxMessages = 50): Array<{ role: string, content: string }> {
@@ -107,8 +108,8 @@ export class SessionManager {
     const lines: string[] = [
       JSON.stringify({
         _type: 'metadata',
-        created_at: session.createdAt,
-        updated_at: session.updatedAt,
+        created_at: session.created_at,
+        updated_at: session.updated_at,
         metadata: session.metadata,
       }),
       ...session.messages.map(m => JSON.stringify(m)),
@@ -128,15 +129,15 @@ export class SessionManager {
     return false
   }
 
-  /** List all sessions (read metadata from each *.jsonl), sorted by updatedAt desc. */
-  listSessions(): SessionListItem[] {
-    if (!existsSync(this.sessionsDir))
+  /** List all sessions (read metadata from each *.jsonl), sorted by updated_at desc. */
+  list_sessions(): SessionListItem[] {
+    if (!existsSync(this.sessions_dir))
       return []
-    const files = readdirSync(this.sessionsDir).filter(f => f.endsWith('.jsonl'))
+    const files = readdirSync(this.sessions_dir).filter(f => f.endsWith('.jsonl'))
     const sessions: SessionListItem[] = []
     for (const file of files) {
       try {
-        const path = join(this.sessionsDir, file)
+        const path = join(this.sessions_dir, file)
         const content = readFileSync(path, 'utf-8')
         const firstLine = content.split('\n').find(l => l.trim())
         if (!firstLine)
@@ -147,8 +148,8 @@ export class SessionManager {
         const stem = file.slice(0, -'.jsonl'.length)
         sessions.push({
           key: stem.replace(/_/g, ':'),
-          createdAt: (data.created_at as string) ?? '',
-          updatedAt: (data.updated_at as string) ?? '',
+          created_at: (data.created_at as string) ?? '',
+          updated_at: (data.updated_at as string) ?? '',
           path,
         })
       }
@@ -156,20 +157,20 @@ export class SessionManager {
         // skip unreadable or invalid files
       }
     }
-    return sessions.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))
+    return sessions.sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''))
   }
 
   /** Clear messages and update timestamp; persists to disk. */
   clear(session: Session): void {
     session.messages = []
-    session.updatedAt = nowIso()
+    session.updated_at = nowIso()
     this.save(session)
   }
 }
 
 export interface SessionListItem {
   key: string
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
   path: string
 }

@@ -237,7 +237,7 @@ export interface CreateAISDKProviderOptions {
   defaultModel: string
 }
 
-export function createAISDKProvider(options: CreateAISDKProviderOptions): LLMProvider {
+export function create_ai_sdk_provider(options: CreateAISDKProviderOptions): LLMProvider {
   const { config, defaultModel } = options
 
   return {

@@ -9,7 +9,7 @@ export interface SubagentManagerLike {
   spawn: (task: string, label: string | undefined, originChannel: string, originChatId: string) => Promise<string>
 }
 
-export function spawnTool(manager: SubagentManagerLike): Tool & { setContext: (channel: string, chatId: string) => void } {
+export function spawnTool(manager: SubagentManagerLike): Tool & { set_context: (channel: string, chat_id: string) => void } {
   let originChannel = 'cli'
   let originChatId = 'direct'
   return {
@@ -23,7 +23,7 @@ export function spawnTool(manager: SubagentManagerLike): Tool & { setContext: (c
       },
       required: ['task'],
     },
-    setContext(ch: string, id: string) {
+    set_context(ch: string, id: string) {
       originChannel = ch
       originChatId = id
     },

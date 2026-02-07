@@ -7,9 +7,9 @@ export interface InboundMessage {
   /** Channel: telegram, discord, cli, etc. */
   channel: string
   /** User identifier */
-  senderId: string
+  sender_id: string
   /** Chat/channel identifier */
-  chatId: string
+  chat_id: string
   /** Message text */
   content: string
   /** ISO timestamp */
@@ -20,13 +20,13 @@ export interface InboundMessage {
   metadata?: Record<string, unknown>
 }
 
-export function getSessionKey(msg: InboundMessage): string {
-  return `${msg.channel}:${msg.chatId}`
+export function get_session_key(msg: InboundMessage): string {
+  return `${msg.channel}:${msg.chat_id}`
 }
 
 export interface OutboundMessage {
   channel: string
-  chatId: string
+  chat_id: string
   content: string
   replyTo?: string
   media?: string[]

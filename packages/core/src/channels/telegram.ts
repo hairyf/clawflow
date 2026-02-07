@@ -109,12 +109,12 @@ export class TelegramChannel extends BaseChannel {
   private async _handleUpdate(msg: Record<string, unknown>): Promise<void> {
     const chat = msg.chat as { id?: number, type?: string } | undefined
     const from = msg.from as { id?: number, username?: string, first_name?: string } | undefined
-    const chatId = chat?.id
+    const chat_id = chat?.id
     const userId = from?.id
-    if (chatId == null || userId == null)
+    if (chat_id == null || userId == null)
       return
 
-    const senderId = from?.username ? `${userId}|${from.username}` : String(userId)
+    const sender_id = from?.username ? `${userId}|${from.username}` : String(userId)
     let content = (msg.text as string) ?? (msg.caption as string) ?? ''
 
     const voice = msg.voice as { file_id?: string, mime_type?: string } | undefined
@@ -132,8 +132,8 @@ export class TelegramChannel extends BaseChannel {
       content = '[empty message]'
 
     await this.handleMessage(
-      senderId,
-      String(chatId),
+      sender_id,
+      String(chat_id),
       content,
       [],
       {
@@ -200,9 +200,9 @@ export class TelegramChannel extends BaseChannel {
     const token = this.config.token
     if (!token)
       return
-    const chatId = msg.chatId
+    const chat_id = msg.chat_id
     const body: Record<string, unknown> = {
-      chat_id: chatId,
+      chat_id,
       text: msg.content,
       parse_mode: 'HTML',
     }

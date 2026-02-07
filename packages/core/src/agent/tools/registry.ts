@@ -4,7 +4,7 @@
  */
 
 import type { Tool, ToolDefinition } from './base'
-import { validateToolParams } from './base'
+import { validate_tool_params } from './base'
 
 export class ToolRegistry {
   private tools = new Map<string, Tool>()
@@ -45,9 +45,9 @@ export class ToolRegistry {
     const tool = this.tools.get(name)
     if (!tool)
       return `Error: Tool '${name}' not found`
-    const errors = tool.validateParams
-      ? tool.validateParams(params)
-      : validateToolParams(tool.parameters, params)
+    const errors = tool.validate_params
+      ? tool.validate_params(params)
+      : validate_tool_params(tool.parameters, params)
     if (errors.length > 0)
       return `Error: Invalid parameters for tool '${name}': ${errors.join('; ')}`
     try {

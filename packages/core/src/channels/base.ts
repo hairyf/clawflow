@@ -28,11 +28,11 @@ export abstract class BaseChannel {
   abstract stop(): Promise<void>
   abstract send(msg: OutboundMessage): Promise<void>
 
-  isAllowed(senderId: string): boolean {
+  isAllowed(sender_id: string): boolean {
     const allowFrom = this.config.allowFrom ?? []
     if (allowFrom.length === 0)
       return true
-    const senderStr = String(senderId)
+    const senderStr = String(sender_id)
     if (allowFrom.includes(senderStr))
       return true
     if (senderStr.includes('|')) {
@@ -45,23 +45,23 @@ export abstract class BaseChannel {
   }
 
   protected async handleMessage(
-    senderId: string,
-    chatId: string,
+    sender_id: string,
+    chat_id: string,
     content: string,
     media: string[] = [],
     metadata: Record<string, unknown> = {},
   ): Promise<void> {
-    if (!this.isAllowed(senderId)) {
+    if (!this.isAllowed(sender_id)) {
       consola.warn(
-        `Access denied for sender ${senderId} on channel ${this.name}. `
+        `Access denied for sender ${sender_id} on channel ${this.name}. `
         + 'Add them to allowFrom in config to grant access.',
       )
       return
     }
     const msg: InboundMessage = {
       channel: this.name,
-      senderId: String(senderId),
-      chatId: String(chatId),
+      sender_id: String(sender_id),
+      chat_id: String(chat_id),
       content,
       timestamp: new Date().toISOString(),
       media: media ?? [],

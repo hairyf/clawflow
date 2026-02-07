@@ -93,7 +93,7 @@ export class SkillsLoader {
     }
     const all = Array.from(byName.values())
     if (filterUnavailable)
-      return all.filter(s => this.checkRequirements(this.getSkillMeta(s.name)))
+      return all.filter(s => this.check_requirements(this.get_skill_meta(s.name)))
     return all
   }
 
@@ -109,7 +109,7 @@ export class SkillsLoader {
     return null
   }
 
-  getSkillMetadata(name: string): SkillMetadata | null {
+  get_skill_metadata(name: string): SkillMetadata | null {
     const content = this.loadSkill(name)
     if (!content || !content.startsWith('---'))
       return null
@@ -146,7 +146,7 @@ export class SkillsLoader {
     }
   }
 
-  stripFrontmatter(content: string): string {
+  strip_frontmatter(content: string): string {
     if (content.startsWith('---')) {
       const match = content.match(/^---\n.*?\n---\n/s)
       if (match)
@@ -155,14 +155,14 @@ export class SkillsLoader {
     return content
   }
 
-  getSkillMeta(name: string): NanobotSkillMeta {
-    const meta = this.getSkillMetadata(name)
+  get_skill_meta(name: string): NanobotSkillMeta {
+    const meta = this.get_skill_metadata(name)
     if (!meta?.metadata)
       return {}
     return this.parseNanobotMetadata(meta.metadata)
   }
 
-  checkRequirements(skillMeta: NanobotSkillMeta): boolean {
+  check_requirements(skillMeta: NanobotSkillMeta): boolean {
     const requires = skillMeta.requires
     if (!requires)
       return true
@@ -194,7 +194,7 @@ export class SkillsLoader {
   }
 
   private getSkillDescription(name: string): string {
-    const meta = this.getSkillMetadata(name)
+    const meta = this.get_skill_metadata(name)
     if (meta?.description)
       return meta.description
     return name
@@ -207,8 +207,8 @@ export class SkillsLoader {
     const lines = ['<skills>']
     for (const s of all) {
       const desc = this.getSkillDescription(s.name)
-      const skillMeta = this.getSkillMeta(s.name)
-      const available = this.checkRequirements(skillMeta)
+      const skillMeta = this.get_skill_meta(s.name)
+      const available = this.check_requirements(skillMeta)
       lines.push(`  <skill available="${String(available).toLowerCase()}">`)
       lines.push(`    <name>${escapeXml(s.name)}</name>`)
       lines.push(`    <description>${escapeXml(desc)}</description>`)
@@ -224,23 +224,23 @@ export class SkillsLoader {
     return lines.join('\n')
   }
 
-  getAlwaysSkills(): string[] {
+  get_always_skills(): string[] {
     const result: string[] = []
     for (const s of this.listSkills(true)) {
-      const meta = this.getSkillMetadata(s.name)
-      const skillMeta = this.getSkillMeta(s.name)
+      const meta = this.get_skill_metadata(s.name)
+      const skillMeta = this.get_skill_meta(s.name)
       if (skillMeta.always || meta?.always)
         result.push(s.name)
     }
     return result
   }
 
-  loadSkillsForContext(names: string[]): string {
+  load_skills_for_context(names: string[]): string {
     const parts: string[] = []
     for (const name of names) {
       const content = this.loadSkill(name)
       if (content) {
-        const body = this.stripFrontmatter(content)
+        const body = this.strip_frontmatter(content)
         parts.push(`### Skill: ${name}\n\n${body}`)
       }
     }

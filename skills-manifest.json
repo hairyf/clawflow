@@ -1,17 +1,1 @@
-{
-  "$schema": "https://raw.githubusercontent.com/hairyf/skills-manifest/main/skills-manifest.schema.json",
-  "agents": [
-    "cursor",
-    "claude-code"
-  ],
-  "skills": {
-    "hairyf/skills": [
-      "unjs",
-      "vitest",
-      "pnpm"
-    ],
-    "vieko/bonfire": [
-      "bonfire"
-    ]
-  }
-}
+{ "$schema": "https://raw.githubusercontent.com/hairyf/skills-manifest/main/skills-manifest.schema.json", "agents": ["cursor", "claude-code"], "skills": { "hairyf/skills": ["unjs", "vitest", "pnpm"], "vieko/bonfire": ["bonfire"] } }

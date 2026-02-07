@@ -17,7 +17,7 @@
 | agent/subagent.py | agent/subagent.ts | SubagentManager |
 | agent/tools/base.py | agent/tools/base.ts | Tool 接口、validateToolParams、toolToSchema |
 | agent/tools/registry.py | agent/tools/registry.ts | ToolRegistry |
-| agent/tools/cron.py | agent/tools/cron-tool.ts | CronTool |
+| agent/tools/cron.py | agent/tools/cron.ts | CronTool |
 | agent/tools/filesystem.py | agent/tools/filesystem.ts | read/write/edit/listdir |
 | agent/tools/shell.py | agent/tools/shell.ts | exec |
 | agent/tools/message.py | agent/tools/message.ts | message |
@@ -68,7 +68,7 @@
 ## 说明
 
 - 未列出 `__init__.py` / `__main__.py`；clawflow 无一一对应的包初始化文件。
-- 命名差异：nanobot 多为 `snake_case` 文件/模块，clawflow 为 `camelCase` 或 `kebab-case`（如 `cron-tool.ts`）。
+- 命名差异：nanobot 多为 `snake_case` 文件/模块，clawflow 为 `camelCase` 或 `kebab-case`（如 `ai-sdk.ts`）。
 - **providers**：nanobot 使用 LiteLLM，clawflow 使用 `@ai-sdk/*` 等，接口通过 `providers/base` 对齐。
 - **bridge / gateway**：clawflow 额外模块，无 nanobot 同名模块。
 - **skills/**：clawflow 下为内置技能 Markdown 与脚本，对应 nanobot 仓库中的 `skills/` 目录内容，非 Python 源码对照。

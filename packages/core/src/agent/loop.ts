@@ -8,13 +8,13 @@ import type { MessageBus } from '../bus/queue'
 import type { CronService } from '../cron/service'
 import type { ChatMessage, LLMProvider, ToolCallRequest } from '../providers/base'
 import type { SubagentManager } from './subagent'
-import { getSessionKey } from '../bus/events'
+import { get_session_key } from '../bus/events'
 import { hasToolCalls } from '../providers/base'
 import { SessionManager } from '../session/manager'
 
-import { parseSessionKey } from '../utils/helpers'
+import { parse_session_key } from '../utils/helpers'
 import { ContextBuilder } from './context'
-import { cronTool } from './tools/cron-tool'
+import { cronTool } from './tools/cron'
 import { editFileTool, listDirTool, readFileTool, writeFileTool } from './tools/filesystem'
 import { messageTool } from './tools/message'
 import { ToolRegistry } from './tools/registry'
@@ -29,7 +29,7 @@ export interface AgentLoopOptions {
   model?: string
   maxIterations?: number
   braveApiKey?: string
-  execTimeout?: number
+  exec_timeout?: number
   restrictToWorkspace?: boolean
   cronService?: CronService | null
   subagentManager?: SubagentManager
@@ -42,7 +42,7 @@ export class AgentLoop {
   private model: string
   private maxIterations: number
   private braveApiKey: string
-  private execTimeout: number
+  private exec_timeout: number
   private restrictToWorkspace: boolean
   private cronService: CronService | null
   private subagentManager: SubagentManager | null
@@ -58,7 +58,7 @@ export class AgentLoop {
     this.model = options.model ?? options.provider.getDefaultModel()
     this.maxIterations = options.maxIterations ?? 20
     this.braveApiKey = options.braveApiKey ?? ''
-    this.execTimeout = options.execTimeout ?? 60
+    this.exec_timeout = options.exec_timeout ?? 60
     this.restrictToWorkspace = options.restrictToWorkspace ?? false
     this.cronService = options.cronService ?? null
     this.subagentManager = options.subagentManager ?? null
@@ -66,14 +66,14 @@ export class AgentLoop {
     this.sessions = new SessionManager(options.workspace)
     this.tools = new ToolRegistry()
 
-    const allowedDir = this.restrictToWorkspace ? this.workspace : null
-    this.tools.register(readFileTool(allowedDir))
-    this.tools.register(writeFileTool(allowedDir))
-    this.tools.register(editFileTool(allowedDir))
-    this.tools.register(listDirTool(allowedDir))
+    const allowed_dir = this.restrictToWorkspace ? this.workspace : null
+    this.tools.register(readFileTool(allowed_dir))
+    this.tools.register(writeFileTool(allowed_dir))
+    this.tools.register(editFileTool(allowed_dir))
+    this.tools.register(listDirTool(allowed_dir))
     this.tools.register(execTool({
       workingDir: this.workspace,
-      timeout: this.execTimeout,
+      timeout: this.exec_timeout,
       restrictToWorkspace: this.restrictToWorkspace,
     }))
     this.tools.register(webSearchTool(this.braveApiKey || undefined))
@@ -104,7 +104,7 @@ export class AgentLoop {
         catch (e: any) {
           await this.bus.publishOutbound({
             channel: msg.channel,
-            chatId: msg.chatId,
+            chat_id: msg.chat_id,
             content: `Sorry, I encountered an error: ${e?.message ?? e}`,
           })
         }
@@ -123,49 +123,49 @@ export class AgentLoop {
     content: string,
     _sessionKey = 'cli:direct',
     channel = 'cli',
-    chatId = 'direct',
+    chat_id = 'direct',
   ): Promise<string> {
-    const msg: InboundMessage = { channel, senderId: 'user', chatId, content }
+    const msg: InboundMessage = { channel, sender_id: 'user', chat_id, content }
     const out = await this.processMessage(msg)
     return out?.content ?? ''
   }
 
-  private setToolContext(channel: string, chatId: string): void {
+  private setToolContext(channel: string, chat_id: string): void {
     const msgTool = this.tools.get('message') as ReturnType<typeof messageTool> | undefined
-    msgTool?.setContext?.(channel, chatId)
+    msgTool?.set_context?.(channel, chat_id)
     const spawn = this.tools.get('spawn') as ReturnType<typeof spawnTool> | undefined
-    spawn?.setContext?.(channel, chatId)
+    spawn?.set_context?.(channel, chat_id)
     const cron = this.tools.get('cron') as ReturnType<typeof cronTool> | undefined
-    cron?.setContext?.(channel, chatId)
+    cron?.set_context?.(channel, chat_id)
   }
 
   private async processMessage(msg: InboundMessage): Promise<OutboundMessage | null> {
     if (msg.channel === 'system') {
       let originChannel: string
       let originChatId: string
-      if (msg.chatId.includes(':')) {
+      if (msg.chat_id.includes(':')) {
         try {
-          [originChannel, originChatId] = parseSessionKey(msg.chatId)
+          [originChannel, originChatId] = parse_session_key(msg.chat_id)
         }
         catch {
           originChannel = 'cli'
-          originChatId = msg.chatId
+          originChatId = msg.chat_id
         }
       }
       else {
         originChannel = 'cli'
-        originChatId = msg.chatId
+        originChatId = msg.chat_id
       }
       return this.processSystemMessage(msg, originChannel, originChatId)
     }
-    const session = this.sessions.getOrCreate(getSessionKey(msg))
-    this.setToolContext(msg.channel, msg.chatId)
+    const session = this.sessions.get_or_create(get_session_key(msg))
+    this.setToolContext(msg.channel, msg.chat_id)
     const history = this.sessions.getHistory(session)
-    const messages = this.context.buildMessages({
+    const messages = this.context.build_messages({
       history,
       currentMessage: msg.content,
       channel: msg.channel,
-      chatId: msg.chatId,
+      chat_id: msg.chat_id,
       media: msg.media ?? undefined,
     })
     const messagesMutable: Array<Record<string, unknown>> = messages.map(m => ({ ...m }))
@@ -196,10 +196,10 @@ export class AgentLoop {
     }
     if (finalContent === null)
       finalContent = 'I\'ve completed processing but have no response.'
-    this.sessions.addMessage(session, 'user', msg.content)
-    this.sessions.addMessage(session, 'assistant', finalContent)
+    this.sessions.add_message(session, 'user', msg.content)
+    this.sessions.add_message(session, 'assistant', finalContent)
     this.sessions.save(session)
-    return { channel: msg.channel, chatId: msg.chatId, content: finalContent }
+    return { channel: msg.channel, chat_id: msg.chat_id, content: finalContent }
   }
 
   private async processSystemMessage(
@@ -207,14 +207,14 @@ export class AgentLoop {
     originChannel: string,
     originChatId: string,
   ): Promise<OutboundMessage | null> {
-    const session = this.sessions.getOrCreate(`${originChannel}:${originChatId}`)
+    const session = this.sessions.get_or_create(`${originChannel}:${originChatId}`)
     this.setToolContext(originChannel, originChatId)
     const history = this.sessions.getHistory(session)
-    const messages = this.context.buildMessages({
+    const messages = this.context.build_messages({
       history,
       currentMessage: msg.content,
       channel: originChannel,
-      chatId: originChatId,
+      chat_id: originChatId,
       media: msg.media ?? undefined,
     })
     const messagesMutable: Array<Record<string, unknown>> = messages.map(m => ({ ...m }))
@@ -245,9 +245,9 @@ export class AgentLoop {
     }
     if (finalContent === null)
       finalContent = 'Background task completed.'
-    this.sessions.addMessage(session, 'user', `[System: ${msg.senderId}] ${msg.content}`)
-    this.sessions.addMessage(session, 'assistant', finalContent)
+    this.sessions.add_message(session, 'user', `[System: ${msg.sender_id}] ${msg.content}`)
+    this.sessions.add_message(session, 'assistant', finalContent)
     this.sessions.save(session)
-    return { channel: originChannel, chatId: originChatId, content: finalContent }
+    return { channel: originChannel, chat_id: originChatId, content: finalContent }
   }
 }

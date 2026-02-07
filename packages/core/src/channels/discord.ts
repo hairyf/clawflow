@@ -121,12 +121,12 @@ export class DiscordChannel extends BaseChannel {
     const author = payload.author as Record<string, unknown> | undefined
     if (author?.bot)
       return
-    const senderId = String(author?.id ?? '')
+    const sender_id = String(author?.id ?? '')
     const channelId = String(payload.channel_id ?? '')
     const content = (payload.content as string) ?? ''
-    if (!senderId || !channelId)
+    if (!sender_id || !channelId)
       return
-    if (!this.isAllowed(senderId))
+    if (!this.isAllowed(sender_id))
       return
 
     const parts: string[] = content ? [content] : []
@@ -140,7 +140,7 @@ export class DiscordChannel extends BaseChannel {
     }
 
     await this.handleMessage(
-      senderId,
+      sender_id,
       channelId,
       parts.filter(Boolean).join('\n') || '[empty message]',
       [],
@@ -165,7 +165,7 @@ export class DiscordChannel extends BaseChannel {
     const token = this.config.token
     if (!token)
       return
-    const url = `${DISCORD_API}/channels/${msg.chatId}/messages`
+    const url = `${DISCORD_API}/channels/${msg.chat_id}/messages`
     const body: Record<string, unknown> = { content: msg.content }
     if (msg.replyTo) {
       body.message_reference = { message_id: msg.replyTo }

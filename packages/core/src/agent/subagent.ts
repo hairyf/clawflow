@@ -17,7 +17,7 @@ export interface SubagentManagerOptions {
   bus: MessageBus
   model?: string
   braveApiKey?: string
-  execTimeout?: number
+  exec_timeout?: number
   restrictToWorkspace?: boolean
 }
 
@@ -27,7 +27,7 @@ export class SubagentManager {
   private bus: MessageBus
   private model: string
   private braveApiKey: string
-  private execTimeout: number
+  private exec_timeout: number
   private restrictToWorkspace: boolean
   /** Running subagent task IDs (nanobot _running_tasks). */
   private runningTasks = new Set<string>()
@@ -38,7 +38,7 @@ export class SubagentManager {
     this.bus = options.bus
     this.model = options.model ?? options.provider.getDefaultModel()
     this.braveApiKey = options.braveApiKey ?? ''
-    this.execTimeout = options.execTimeout ?? 60
+    this.exec_timeout = options.exec_timeout ?? 60
     this.restrictToWorkspace = options.restrictToWorkspace ?? false
   }
 
@@ -88,13 +88,13 @@ export class SubagentManager {
     originChatId: string,
   ): Promise<void> {
     const tools = new ToolRegistry()
-    const allowedDir = this.restrictToWorkspace ? this.workspace : null
-    tools.register(readFileTool(allowedDir))
-    tools.register(writeFileTool(allowedDir))
-    tools.register(listDirTool(allowedDir))
+    const allowed_dir = this.restrictToWorkspace ? this.workspace : null
+    tools.register(readFileTool(allowed_dir))
+    tools.register(writeFileTool(allowed_dir))
+    tools.register(listDirTool(allowed_dir))
     tools.register(execTool({
       workingDir: this.workspace,
-      timeout: this.execTimeout,
+      timeout: this.exec_timeout,
       restrictToWorkspace: this.restrictToWorkspace,
     }))
     tools.register(webSearchTool(this.braveApiKey || undefined))
@@ -170,8 +170,8 @@ ${result}
 Summarize this naturally for the user. Keep it brief (1-2 sentences). Do not mention technical details like "subagent" or task IDs.`
     const msg: InboundMessage = {
       channel: 'system',
-      senderId: 'subagent',
-      chatId: `${originChannel}:${originChatId}`,
+      sender_id: 'subagent',
+      chat_id: `${originChannel}:${originChatId}`,
       content: announceContent,
     }
     await this.bus.publishInbound(msg)

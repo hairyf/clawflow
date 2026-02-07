@@ -29,8 +29,8 @@ export interface Tool {
   readonly name: string
   readonly description: string
   readonly parameters: ToolParameterSchema
-  /** Optional: validate params against JSON Schema. If absent, registry uses validateToolParams(parameters, params). */
-  validateParams?: (params: Record<string, unknown>) => string[]
+  /** Optional: validate params against JSON Schema. If absent, registry uses validate_tool_params(parameters, params). */
+  validate_params?: (params: Record<string, unknown>) => string[]
   execute: (args: Record<string, unknown>) => Promise<string>
 }
 
@@ -110,14 +110,14 @@ function validateValue(schema: ToolParameterSchema, value: unknown, path: string
 
 /**
  * Validate top-level tool params against schema (schema.type should be object).
- * Use from registry when tool has no validateParams.
+ * Use from registry when tool has no validate_params.
  */
-export function validateToolParams(schema: ToolParameterSchema, params: Record<string, unknown>): string[] {
+export function validate_tool_params(schema: ToolParameterSchema, params: Record<string, unknown>): string[] {
   const root = { ...schema, type: 'object' } as ToolParameterSchema
   return validateValue(root, params, '')
 }
 
-export function toolToSchema(tool: Tool): ToolDefinition {
+export function tool_to_schema(tool: Tool): ToolDefinition {
   return {
     type: 'function',
     function: {

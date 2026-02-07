@@ -1,3 +1,64 @@
+# Clawflow AI Agent Constraints
+
+When adding new features or syncing with nanobot, follow these rules.
+
+---
+
+## 1. Naming Conventions
+
+- **Identifiers**: Use `snake_case` for all methods, functions, and properties to match nanobot.
+  - Examples: `list_memory_files`, `add_message`, `chat_id`, `created_at`
+  - Reference: `.bonfire/specs/snake-case-rename-map.md`
+- **File names**: Align with nanobot when there is a direct counterpart.
+  - Use `cron.ts` (not `cron-tool.ts`) for `agent/tools/cron`
+  - Reference: `.bonfire/specs/code-file-naming-diff.md`
+
+---
+
+## 2. File Structure
+
+- **Mapping**: Follow `.bonfire/specs/code-file-mapping.md` for nanobot ↔ clawflow file correspondence.
+- **New modules**: Place code in the mapped directory (e.g., `agent/tools/`, `cron/`, `session/`).
+- **Clawflow-only modules**: `bridge/`, `gateway/` have no nanobot equivalent; extend as needed.
+
+---
+
+## 3. Syncing with Nanobot
+
+- **Reference source**: `sources/nanobot/nanobot/` (Python)
+- **Target source**: `packages/core/src/` (TypeScript)
+- **Differences**: `.bonfire/specs/code-file-diff.md` documents intentional differences (LLM provider, implementation style).
+- **Behavior parity**: Match nanobot behavior where a corresponding module exists; document divergences in the diff spec.
+
+---
+
+## 4. Adding New Features
+
+- Add unit tests in `packages/core/test/` mirroring the source layout.
+- Use Vitest with `describe` / `it`; prefer A/B-style tests when comparing with nanobot.
+- Update `.bonfire/specs/code-file-mapping.md` and `.bonfire/specs/code-file-diff.md` if adding or changing modules.
+- Use `snake_case` for all new identifiers.
+
+---
+
+## 5. Acceptable Differences
+
+- **LLM provider**: nanobot uses LiteLLM; clawflow uses `@ai-sdk/*` multi-provider.
+- **Types**: TypeScript interfaces vs Python dataclasses.
+- **Async model**: `setImmediate` + Promise vs `asyncio.create_task`.
+- **Branding**: ClawFlow vs nanobot in user-facing strings.
+
+---
+
+## 6. Verification
+
+After changes, run:
+
+- `pnpm test --run`
+- `pnpm build`
+
+---
+
 <skills_system priority="1">
 
 ## Available Skills

@@ -8,7 +8,7 @@ linear: false
 # Session Context: clawflow
 
 **Date**: 2025-02-07
-**Status**: Ended
+**Status**: Started
 **Branch**: main
 
 ---
@@ -25,7 +25,8 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
-- **2025-02-07** (本会话): **nanobot 对照精简与 get_running_count** — 删除 `nanobot-vs-clawflow-verification.md`、`skills-module-verification.md`；新增 `code-file-mapping.md`（nanobot ↔ clawflow 文件对照表）、`code-file-diff.md`（代码文件差异表）；逐行核对后修复 loop 内 system 消息的 chat_id 解析（改用 `parseSessionKey`，仅首冒号分割）；实现 `SubagentManager.getRunningCount()`（runningTasks Set + spawn 时 add、finally 时 delete）。Key Resources 已改为引用新 spec。
+- **2025-02-07** (本会话): **packages/core test/ nanobot a/b 对照单元测试** — 新建 `test/` 目录，vitest 包含 `test/**/*.test.ts`；新增 base、registry、helpers、bus/events、bus/queue、agent/context、memory、skills、session、cron、config、subagent、tools（filesystem、cron-tool、message、shell、web）共 19 个测试文件、114 用例；shell/web 使用 vi.mock/vi.hoisted 模拟 exec、ofetch；loader getApiKey/getApiBase 对齐 nanobot _match_provider；SessionManager 增加 `sessionsDir` 可选参数便于测试；覆盖率 72% → 84%（shell 100%、web 96%）。
+- **2025-02-07**: **nanobot 对照精简与 get_running_count** — 删除 `nanobot-vs-clawflow-verification.md`、`skills-module-verification.md`；新增 `code-file-mapping.md`、`code-file-diff.md`；修复 loop chat_id 解析；实现 `SubagentManager.getRunningCount()`。
 - **2025-02-07**: **Skills 核查与单元测试** — 写 `.bonfire/specs/skills-module-verification.md`；`context.test.ts` 三用例；ContextBuilder 可选 `skills?: SkillsLoader`；vitest/tsdown 排除 `*.test.ts`。
 - **2025-02-07**: **任务 19 Skills + 打包携带 skills** — SkillsLoader：builtin 目录、getSkillMetadata/stripFrontmatter/checkRequirements、getAlwaysSkills、loadSkillsForContext；utils 增加 getSkillsPath；build 时 `scripts/copy-skills.mjs` 将 repo `skills/` 复制到 `dist/skills`，打包携带 builtin skills。
 - **2025-02-07**: **任务 21 Tool 校验与 registry** — 实现 `validateToolParams`（base.ts，按 JSON Schema 校验）、Tool 可选 `validateParams`、registry execute 前校验、`unregister`/`has`/`toolNames`。
@@ -82,6 +83,9 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 23. [x] **Cron**: addJob deleteAfterRun、CLI --delete-after-run
 24. [x] **Config**: migrateConfig
 25. [x] **Utils**: truncateString、parseSessionKey、getSkillsPath
+
+### 七、单元测试（test/）
+26. [x] **nanobot a/b 对照测试** — test/ 目录，shell/web/loader/helpers/context 等 mock 测试，114 用例，覆盖率 84%
 
 ---
 

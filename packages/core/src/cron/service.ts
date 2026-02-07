@@ -15,11 +15,11 @@ function nowMs(): number {
 
 function computeNextRun(schedule: CronSchedule, now: number): number | undefined {
   if (schedule.kind === 'at') {
-    const at = schedule.atMs ?? 0
+    const at = schedule.at_ms ?? 0
     return at > now ? at : undefined
   }
   if (schedule.kind === 'every') {
-    const every = schedule.everyMs ?? 0
+    const every = schedule.every_ms ?? 0
     return every > 0 ? now + every : undefined
   }
   if (schedule.kind === 'cron' && schedule.expr) {
@@ -61,8 +61,8 @@ export class CronService {
           enabled: j.enabled !== false,
           schedule: {
             kind: j.schedule?.kind ?? 'every',
-            atMs: j.schedule?.atMs,
-            everyMs: j.schedule?.everyMs,
+            at_ms: j.schedule?.at_ms,
+            every_ms: j.schedule?.every_ms,
             expr: j.schedule?.expr,
             tz: j.schedule?.tz,
           },
@@ -74,14 +74,14 @@ export class CronService {
             to: j.payload?.to,
           },
           state: {
-            nextRunAtMs: j.state?.nextRunAtMs,
+            next_run_at_ms: j.state?.next_run_at_ms,
             lastRunAtMs: j.state?.lastRunAtMs,
             lastStatus: j.state?.lastStatus,
             lastError: j.state?.lastError,
           },
-          createdAtMs: j.createdAtMs ?? 0,
-          updatedAtMs: j.updatedAtMs ?? 0,
-          deleteAfterRun: j.deleteAfterRun,
+          created_at_ms: j.created_at_ms ?? 0,
+          updated_at_ms: j.updated_at_ms ?? 0,
+          delete_after_run: j.delete_after_run,
         }))
         this.store = { version: 1, jobs }
         return this.store
@@ -106,16 +106,16 @@ export class CronService {
         enabled: j.enabled,
         schedule: {
           kind: j.schedule.kind,
-          atMs: j.schedule.atMs,
-          everyMs: j.schedule.everyMs,
+          at_ms: j.schedule.at_ms,
+          every_ms: j.schedule.every_ms,
           expr: j.schedule.expr,
           tz: j.schedule.tz,
         },
         payload: j.payload,
         state: j.state,
-        createdAtMs: j.createdAtMs,
-        updatedAtMs: j.updatedAtMs,
-        deleteAfterRun: j.deleteAfterRun,
+        created_at_ms: j.created_at_ms,
+        updated_at_ms: j.updated_at_ms,
+        delete_after_run: j.delete_after_run,
       })),
     }
     writeFileSync(this.storePath, JSON.stringify(data, null, 2), 'utf-8')
@@ -124,8 +124,8 @@ export class CronService {
   private getNextWakeMs(): number | undefined {
     const store = this.loadStore()
     const times = store.jobs
-      .filter(j => j.enabled && j.state.nextRunAtMs)
-      .map(j => j.state.nextRunAtMs!)
+      .filter(j => j.enabled && j.state.next_run_at_ms)
+      .map(j => j.state.next_run_at_ms!)
     return times.length ? Math.min(...times) : undefined
   }
 
@@ -149,7 +149,7 @@ export class CronService {
     const store = this.loadStore()
     const now = nowMs()
     const due = store.jobs.filter(
-      j => j.enabled && j.state.nextRunAtMs && now >= j.state.nextRunAtMs,
+      j => j.enabled && j.state.next_run_at_ms && now >= j.state.next_run_at_ms,
     )
     for (const job of due)
       await this.executeJob(job)
@@ -172,18 +172,18 @@ export class CronService {
       consola.error(`Cron: job '${job.name}' failed:`, e)
     }
     job.state.lastRunAtMs = start
-    job.updatedAtMs = nowMs()
+    job.updated_at_ms = nowMs()
     if (job.schedule.kind === 'at') {
-      if (job.deleteAfterRun) {
+      if (job.delete_after_run) {
         this.store!.jobs = this.store!.jobs.filter(j => j.id !== job.id)
       }
       else {
         job.enabled = false
-        job.state.nextRunAtMs = undefined
+        job.state.next_run_at_ms = undefined
       }
     }
     else {
-      job.state.nextRunAtMs = computeNextRun(job.schedule, nowMs())
+      job.state.next_run_at_ms = computeNextRun(job.schedule, nowMs())
     }
   }
 
@@ -192,8 +192,8 @@ export class CronService {
     const store = this.loadStore()
     const now = nowMs()
     for (const job of store.jobs) {
-      if (job.enabled && !job.state.nextRunAtMs)
-        job.state.nextRunAtMs = computeNextRun(job.schedule, now)
+      if (job.enabled && !job.state.next_run_at_ms)
+        job.state.next_run_at_ms = computeNextRun(job.schedule, now)
     }
     this.saveStore()
     this.armTimer()
@@ -208,17 +208,17 @@ export class CronService {
     }
   }
 
-  listJobs(includeDisabled = false): CronJob[] {
+  list_jobs(includeDisabled = false): CronJob[] {
     const store = this.loadStore()
     const list = includeDisabled ? store.jobs : store.jobs.filter(j => j.enabled)
-    return list.sort((a, b) => (a.state.nextRunAtMs ?? Infinity) - (b.state.nextRunAtMs ?? Infinity))
+    return list.sort((a, b) => (a.state.next_run_at_ms ?? Infinity) - (b.state.next_run_at_ms ?? Infinity))
   }
 
-  addJob(
+  add_job(
     name: string,
     schedule: CronSchedule,
     message: string,
-    opts: { deliver?: boolean, channel?: string, to?: string, deleteAfterRun?: boolean } = {},
+    opts: { deliver?: boolean, channel?: string, to?: string, delete_after_run?: boolean } = {},
   ): CronJob {
     const store = this.loadStore()
     const now = nowMs()
@@ -234,10 +234,10 @@ export class CronService {
         channel: opts.channel,
         to: opts.to,
       },
-      state: { nextRunAtMs: computeNextRun(schedule, now) },
-      createdAtMs: now,
-      updatedAtMs: now,
-      deleteAfterRun: opts.deleteAfterRun,
+      state: { next_run_at_ms: computeNextRun(schedule, now) },
+      created_at_ms: now,
+      updated_at_ms: now,
+      delete_after_run: opts.delete_after_run,
     }
     store.jobs.push(job)
     this.saveStore()
@@ -246,7 +246,7 @@ export class CronService {
     return job
   }
 
-  enableJob(jobId: string, enabled: boolean): CronJob | null {
+  enable_job(jobId: string, enabled: boolean): CronJob | null {
     const store = this.loadStore()
     const job = store.jobs.find(j => j.id === jobId)
     if (!job)
@@ -254,9 +254,9 @@ export class CronService {
     if (job.enabled === enabled)
       return job
     job.enabled = enabled
-    job.updatedAtMs = nowMs()
-    if (enabled && !job.state.nextRunAtMs)
-      job.state.nextRunAtMs = computeNextRun(job.schedule, nowMs())
+    job.updated_at_ms = nowMs()
+    if (enabled && !job.state.next_run_at_ms)
+      job.state.next_run_at_ms = computeNextRun(job.schedule, nowMs())
     this.saveStore()
     this.armTimer()
     return job

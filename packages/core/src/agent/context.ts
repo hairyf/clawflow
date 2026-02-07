@@ -7,7 +7,7 @@ import { Buffer } from 'node:buffer'
 import { existsSync, readFileSync } from 'node:fs'
 import { extname } from 'node:path'
 import { join } from 'pathe'
-import { getRuntimeInfo } from '../utils/helpers'
+import { get_runtime_info } from '../utils/helpers'
 import { MemoryStore } from './memory'
 import { SkillsLoader } from './skills'
 
@@ -41,7 +41,7 @@ export class ContextBuilder {
   buildSystemPrompt(_skillNames?: string[]): string {
     const parts: string[] = []
     const now = new Date().toLocaleString('en-CA', { weekday: 'long' })
-    const runtime = getRuntimeInfo()
+    const runtime = get_runtime_info()
     parts.push(`# ClawFlow
 
 You are ClawFlow, a helpful AI assistant. You have access to tools to:
@@ -70,13 +70,13 @@ Reply directly with text for normal conversation. Use the message tool only when
       if (existsSync(path))
         parts.push(`## ${name}\n\n${readFileSync(path, 'utf-8')}`)
     }
-    const mem = this.memory.getMemoryContext()
+    const mem = this.memory.get_memory_context()
     if (mem)
       parts.push(`# Memory\n\n${mem}`)
     // Progressive skills: 1) always-loaded skills full content
-    const alwaysSkills = this.skills.getAlwaysSkills()
+    const alwaysSkills = this.skills.get_always_skills()
     if (alwaysSkills.length) {
-      const alwaysContent = this.skills.loadSkillsForContext(alwaysSkills)
+      const alwaysContent = this.skills.load_skills_for_context(alwaysSkills)
       if (alwaysContent)
         parts.push(`# Active Skills\n\n${alwaysContent}`)
     }
@@ -93,17 +93,17 @@ ${skillsSummary}`)
     return parts.join('\n\n---\n\n')
   }
 
-  buildMessages(options: {
+  build_messages(options: {
     history: Array<{ role: string, content: string }>
     currentMessage: string
     channel?: string
-    chatId?: string
+    chat_id?: string
     /** Optional local file paths for images (built like nanobot _build_user_content). */
     media?: string[]
   }): Array<{ role: string, content: string | UserContentPart[] }> {
     const system = this.buildSystemPrompt()
-    const sessionNote = (options.channel && options.chatId)
-      ? `\n\n## Current Session\nChannel: ${options.channel}\nChat ID: ${options.chatId}`
+    const sessionNote = (options.channel && options.chat_id)
+      ? `\n\n## Current Session\nChannel: ${options.channel}\nChat ID: ${options.chat_id}`
       : ''
     const userContent = this.buildUserContent(options.currentMessage, options.media)
     const messages: Array<{ role: string, content: string | UserContentPart[] }> = [

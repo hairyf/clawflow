@@ -81,7 +81,7 @@ export class WhatsAppChannel extends BaseChannel {
     try {
       const payload = JSON.stringify({
         type: 'send',
-        to: msg.chatId,
+        to: msg.chat_id,
         text: msg.content,
       })
       this._ws.send(payload)
@@ -99,12 +99,12 @@ export class WhatsAppChannel extends BaseChannel {
       if (msgType === 'message') {
         const sender = (data.sender as string) ?? ''
         let content = (data.content as string) ?? ''
-        const chatId = sender.includes('@') ? sender.split('@')[0] : sender
+        const chat_id = sender.includes('@') ? sender.split('@')[0] : sender
         if (content === '[Voice Message]')
           content = '[Voice Message: Transcription not available for WhatsApp yet]'
 
         await this.handleMessage(
-          chatId,
+          chat_id,
           sender,
           content,
           [],

@@ -9,14 +9,14 @@ import { defineCommand, runMain } from 'citty'
 import { consola } from 'consola'
 import { AgentLoop } from '../agent/loop'
 import { SubagentManager } from '../agent/subagent'
-import { startBridge } from '../bridge'
+import { start_bridge } from '../bridge'
 import { MessageBus } from '../bus/queue'
-import { getApiKey, getWorkspacePathFromConfig, loadConfig, saveConfig } from '../config/loader'
+import { get_api_key, get_workspace_path_from_config, load_config, save_config } from '../config/loader'
 import { defaultConfig } from '../config/schema'
 import { CronService } from '../cron/service'
-import { startGateway } from '../gateway'
-import { createAISDKProvider } from '../providers/ai-sdk'
-import { getConfigPath, getCronStorePath, getWorkspacePath } from '../utils/helpers'
+import { start_gateway } from '../gateway'
+import { create_ai_sdk_provider } from '../providers/ai-sdk'
+import { get_config_path, get_cron_store_path, get_workspace_path } from '../utils/helpers'
 
 const LOGO = '🐈'
 
@@ -37,15 +37,15 @@ const main = defineCommand({
     onboard: defineCommand({
       meta: { description: 'Initialize config and workspace' },
       async run() {
-        const configPath = getConfigPath()
+        const configPath = get_config_path()
         const { existsSync, writeFileSync } = await import('node:fs')
         const { mkdirSync } = await import('node:fs')
-        const workspace = getWorkspacePath()
+        const workspace = get_workspace_path()
         if (existsSync(configPath)) {
           consola.warn(`Config already exists at ${configPath}`)
         }
         else {
-          saveConfig(defaultConfig as any)
+          save_config(defaultConfig as any)
           consola.success(`Created config at ${configPath}`)
         }
         consola.success(`Workspace at ${workspace}`)
@@ -61,11 +61,11 @@ const main = defineCommand({
             consola.log(`  Created ${name}`)
           }
         }
-        const memoryDir = `${workspace}/memory`
-        mkdirSync(memoryDir, { recursive: true })
-        const memoryFile = `${memoryDir}/MEMORY.md`
-        if (!existsSync(memoryFile)) {
-          writeFileSync(memoryFile, '# Long-term Memory\n\n(Important facts and preferences)\n', 'utf-8')
+        const memory_dir = `${workspace}/memory`
+        mkdirSync(memory_dir, { recursive: true })
+        const memory_file = `${memory_dir}/MEMORY.md`
+        if (!existsSync(memory_file)) {
+          writeFileSync(memory_file, '# Long-term Memory\n\n(Important facts and preferences)\n', 'utf-8')
           consola.log('  Created memory/MEMORY.md')
         }
         consola.success(`${LOGO} ClawFlow is ready!`)
@@ -79,15 +79,15 @@ const main = defineCommand({
         session: { type: 'string', alias: 's', default: 'cli:default', description: 'Session ID' },
       },
       async run({ args }) {
-        const config = await loadConfig()
-        const apiKey = getApiKey(config)
+        const config = await load_config()
+        const apiKey = get_api_key(config)
         if (!apiKey) {
           consola.error('No API key configured. Set providers.openrouter.apiKey in ~/.clawflow/config.json')
           process.exit(1)
         }
-        const workspace = getWorkspacePathFromConfig(config)
+        const workspace = get_workspace_path_from_config(config)
         const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
-        const provider = createAISDKProvider({ config, defaultModel: model })
+        const provider = create_ai_sdk_provider({ config, defaultModel: model })
         const bus = new MessageBus()
         const subagent = new SubagentManager({
           provider,
@@ -95,7 +95,7 @@ const main = defineCommand({
           bus,
           model,
           braveApiKey: config.tools?.web?.search?.apiKey,
-          execTimeout: config.tools?.exec?.timeout,
+          exec_timeout: config.tools?.exec?.timeout,
           restrictToWorkspace: config.tools?.restrictToWorkspace,
         })
         const agent = new AgentLoop({
@@ -104,7 +104,7 @@ const main = defineCommand({
           workspace,
           model,
           braveApiKey: config.tools?.web?.search?.apiKey,
-          execTimeout: config.tools?.exec?.timeout,
+          exec_timeout: config.tools?.exec?.timeout,
           restrictToWorkspace: config.tools?.restrictToWorkspace,
           subagentManager: subagent,
         })
@@ -130,15 +130,15 @@ const main = defineCommand({
     status: defineCommand({
       meta: { description: 'Show status' },
       async run() {
-        const configPath = getConfigPath()
-        const config = await loadConfig()
-        const workspace = getWorkspacePathFromConfig(config)
+        const configPath = get_config_path()
+        const config = await load_config()
+        const workspace = get_workspace_path_from_config(config)
         const { existsSync } = await import('node:fs')
         intro(`${LOGO} ClawFlow Status`)
         consola.log(`Config: ${configPath} ${existsSync(configPath) ? '✓' : '✗'}`)
         consola.log(`Workspace: ${workspace} ${existsSync(workspace) ? '✓' : '✗'}`)
         consola.log(`Model: ${config.agents?.defaults?.model ?? 'default'}`)
-        const key = getApiKey(config)
+        const key = get_api_key(config)
         consola.log(`API key: ${key ? '✓' : 'not set'}`)
         outro('Done')
       },
@@ -150,7 +150,7 @@ const main = defineCommand({
           meta: { description: 'Show channel status (from config)' },
           async run() {
             intro(`${LOGO} Channels`)
-            const config = await loadConfig()
+            const config = await load_config()
             const ch = config.channels ?? {}
             const rows: [string, boolean][] = [
               ['telegram', ch.telegram?.enabled ?? false],
@@ -170,11 +170,11 @@ const main = defineCommand({
         login: defineCommand({
           meta: { description: 'WhatsApp: link device via QR code (starts bridge)' },
           async run() {
-            const config = await loadConfig()
+            const config = await load_config()
             const bridgeConfig = config.bridge ?? { port: 3001, authDir: '~/.clawflow/whatsapp-auth' }
             consola.info(`${LOGO} Starting WhatsApp bridge...`)
             consola.info('Scan the QR code to connect.\n')
-            const server = await startBridge(bridgeConfig)
+            const server = await start_bridge(bridgeConfig)
             process.on('SIGINT', async () => {
               consola.info('Shutting down bridge...')
               await server.stop()
@@ -194,10 +194,10 @@ const main = defineCommand({
         start: defineCommand({
           meta: { description: 'Start bridge server for WhatsApp channel' },
           async run() {
-            const config = await loadConfig()
+            const config = await load_config()
             const bridgeConfig = config.bridge ?? { port: 3001, authDir: '~/.clawflow/whatsapp-auth' }
             consola.info(`${LOGO} Starting WhatsApp bridge on port ${bridgeConfig.port ?? 3001}...`)
-            const server = await startBridge(bridgeConfig)
+            const server = await start_bridge(bridgeConfig)
             process.on('SIGINT', async () => {
               consola.info('Shutting down bridge...')
               await server.stop()
@@ -220,10 +220,10 @@ const main = defineCommand({
             port: { type: 'string', alias: 'p', description: 'Gateway port (for future HTTP API)' },
           },
           async run({ args }) {
-            const config = await loadConfig()
+            const config = await load_config()
             const port = args.port ? Number(args.port) : config.gateway?.port ?? 18790
             consola.info(`${LOGO} Starting gateway on port ${port}...`)
-            const controller = await startGateway(config)
+            const controller = await start_gateway(config)
             const shutdown = async (): Promise<void> => {
               await controller.stop()
               process.exit(0)
@@ -241,15 +241,15 @@ const main = defineCommand({
         list: defineCommand({
           meta: { description: 'List jobs' },
           async run() {
-            const service = new CronService(getCronStorePath())
-            const jobs = service.listJobs(true)
+            const service = new CronService(get_cron_store_path())
+            const jobs = service.list_jobs(true)
             if (jobs.length === 0) {
               consola.log('No scheduled jobs.')
               return
             }
             for (const j of jobs) {
               const sched = j.schedule.kind === 'every'
-                ? `every ${(j.schedule.everyMs ?? 0) / 1000}s`
+                ? `every ${(j.schedule.every_ms ?? 0) / 1000}s`
                 : j.schedule.kind === 'cron'
                   ? (j.schedule.expr ?? '')
                   : 'at'
@@ -268,34 +268,34 @@ const main = defineCommand({
             deliver: { type: 'boolean', alias: 'd', default: false, description: 'Deliver response to channel' },
             to: { type: 'string', alias: 't', description: 'Recipient for delivery (chat_id)' },
             channel: { type: 'string', alias: 'ch', description: 'Channel for delivery (e.g. telegram, whatsapp)' },
-            deleteAfterRun: { type: 'boolean', default: false, description: 'Remove job after it runs (for --at jobs)' },
+            delete_after_run: { type: 'boolean', default: false, description: 'Remove job after it runs (for --at jobs)' },
           },
           async run({ args }) {
             let schedule: CronSchedule
             if (args.every) {
-              schedule = { kind: 'every', everyMs: Number(args.every) * 1000 }
+              schedule = { kind: 'every', every_ms: Number(args.every) * 1000 }
             }
             else if (args.cron) {
               schedule = { kind: 'cron', expr: args.cron }
             }
             else if (args.at) {
-              const atMs = new Date(args.at).getTime()
-              if (Number.isNaN(atMs)) {
+              const at_ms = new Date(args.at).getTime()
+              if (Number.isNaN(at_ms)) {
                 consola.error('Invalid --at format. Use ISO format, e.g. 2025-02-07T15:00:00')
                 process.exit(1)
               }
-              schedule = { kind: 'at', atMs }
+              schedule = { kind: 'at', at_ms }
             }
             else {
               consola.error('Specify --every, --cron, or --at')
               process.exit(1)
             }
-            const service = new CronService(getCronStorePath())
-            const job = service.addJob(args.name as string, schedule, args.message as string, {
+            const service = new CronService(get_cron_store_path())
+            const job = service.add_job(args.name as string, schedule, args.message as string, {
               deliver: args.deliver ?? false,
               channel: args.channel as string | undefined,
               to: args.to as string | undefined,
-              deleteAfterRun: args.deleteAfterRun ?? false,
+              delete_after_run: args.delete_after_run ?? false,
             })
             consola.success(`Added job '${job.name}' (${job.id})`)
           },
@@ -309,7 +309,7 @@ const main = defineCommand({
               consola.error('Usage: clawflow cron remove <job_id>')
               process.exit(1)
             }
-            const service = new CronService(getCronStorePath())
+            const service = new CronService(get_cron_store_path())
             if (service.removeJob(id))
               consola.success(`Removed ${id}`)
             else
@@ -328,8 +328,8 @@ const main = defineCommand({
               consola.error('Usage: clawflow cron enable <job_id> [--disable]')
               process.exit(1)
             }
-            const service = new CronService(getCronStorePath())
-            const job = service.enableJob(id, !args.disable)
+            const service = new CronService(get_cron_store_path())
+            const job = service.enable_job(id, !args.disable)
             if (job)
               consola.success(`Job '${job.name}' ${args.disable ? 'disabled' : 'enabled'}`)
             else
@@ -348,15 +348,15 @@ const main = defineCommand({
               consola.error('Usage: clawflow cron run <job_id> [--force]')
               process.exit(1)
             }
-            const config = await loadConfig()
-            const apiKey = getApiKey(config)
+            const config = await load_config()
+            const apiKey = get_api_key(config)
             if (!apiKey) {
               consola.error('No API key configured. Run clawflow onboard and set API key in config.')
               process.exit(1)
             }
-            const workspace = getWorkspacePathFromConfig(config)
+            const workspace = get_workspace_path_from_config(config)
             const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
-            const provider = createAISDKProvider({ config, defaultModel: model })
+            const provider = create_ai_sdk_provider({ config, defaultModel: model })
             const bus = new MessageBus()
             const subagent = new SubagentManager({
               provider,
@@ -364,7 +364,7 @@ const main = defineCommand({
               bus,
               model,
               braveApiKey: config.tools?.web?.search?.apiKey,
-              execTimeout: config.tools?.exec?.timeout,
+              exec_timeout: config.tools?.exec?.timeout,
               restrictToWorkspace: config.tools?.restrictToWorkspace,
             })
             const agent = new AgentLoop({
@@ -373,11 +373,11 @@ const main = defineCommand({
               workspace,
               model,
               braveApiKey: config.tools?.web?.search?.apiKey,
-              execTimeout: config.tools?.exec?.timeout,
+              exec_timeout: config.tools?.exec?.timeout,
               restrictToWorkspace: config.tools?.restrictToWorkspace,
               subagentManager: subagent,
             })
-            const cronService = new CronService(getCronStorePath())
+            const cronService = new CronService(get_cron_store_path())
             cronService.onJob = async (job) => {
               const response = await agent.processDirect(
                 job.payload.message,
@@ -388,7 +388,7 @@ const main = defineCommand({
               if (job.payload.deliver && job.payload.channel && job.payload.to) {
                 await bus.publishOutbound({
                   channel: job.payload.channel,
-                  chatId: job.payload.to,
+                  chat_id: job.payload.to,
                   content: response ?? '',
                 })
               }

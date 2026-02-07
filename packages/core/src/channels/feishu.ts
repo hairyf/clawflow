@@ -71,7 +71,7 @@ export class FeishuChannel extends BaseChannel {
       consola.warn('Feishu client not initialized (no access token)')
       return
     }
-    const receiveIdType = msg.chatId.startsWith('oc_') ? 'chat_id' : 'open_id'
+    const receiveIdType = msg.chat_id.startsWith('oc_') ? 'chat_id' : 'open_id'
     const content = JSON.stringify({ text: msg.content })
     try {
       await ofetch(`${FEISHU_API}/im/v1/messages`, {
@@ -82,7 +82,7 @@ export class FeishuChannel extends BaseChannel {
         },
         query: { receive_id_type: receiveIdType },
         body: {
-          receive_id: msg.chatId,
+          receive_id: msg.chat_id,
           msg_type: 'text',
           content,
         },

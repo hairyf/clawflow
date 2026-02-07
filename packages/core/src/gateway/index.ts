@@ -10,11 +10,11 @@ import { AgentLoop } from '../agent/loop'
 import { SubagentManager } from '../agent/subagent'
 import { MessageBus } from '../bus/queue'
 import { ChannelManager } from '../channels/manager'
-import { getApiKey, getWorkspacePathFromConfig } from '../config/loader'
+import { get_api_key, get_workspace_path_from_config } from '../config/loader'
 import { CronService } from '../cron/service'
-import { HeartbeatService } from '../heartbeat/service'
-import { createAISDKProvider } from '../providers/ai-sdk'
-import { getCronStorePath } from '../utils/helpers'
+import { HeartbeatService } from '../heartbeat'
+import { create_ai_sdk_provider } from '../providers/ai-sdk'
+import { get_cron_store_path } from '../utils/helpers'
 
 const LOGO = '🐈'
 
@@ -22,27 +22,27 @@ export interface GatewayController {
   stop: () => Promise<void>
 }
 
-export async function startGateway(config: ClawflowConfig): Promise<GatewayController> {
-  const apiKey = getApiKey(config)
+export async function start_gateway(config: ClawflowConfig): Promise<GatewayController> {
+  const apiKey = get_api_key(config)
   if (!apiKey) {
     throw new Error('No API key configured. Set providers.openrouter.apiKey in ~/.clawflow/config.json')
   }
 
-  const workspace = getWorkspacePathFromConfig(config)
+  const workspace = get_workspace_path_from_config(config)
   const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
   const heartbeatConfig = config.heartbeat ?? { enabled: true, intervalS: 30 * 60 }
 
   const bus = new MessageBus()
-  const provider = createAISDKProvider({ config, defaultModel: model })
+  const provider = create_ai_sdk_provider({ config, defaultModel: model })
 
-  const cronService = new CronService(getCronStorePath())
+  const cronService = new CronService(get_cron_store_path())
   const subagent = new SubagentManager({
     provider,
     workspace,
     bus,
     model,
     braveApiKey: config.tools?.web?.search?.apiKey,
-    execTimeout: config.tools?.exec?.timeout,
+    exec_timeout: config.tools?.exec?.timeout,
     restrictToWorkspace: config.tools?.restrictToWorkspace,
   })
   const agent = new AgentLoop({
@@ -51,7 +51,7 @@ export async function startGateway(config: ClawflowConfig): Promise<GatewayContr
     workspace,
     model,
     braveApiKey: config.tools?.web?.search?.apiKey,
-    execTimeout: config.tools?.exec?.timeout,
+    exec_timeout: config.tools?.exec?.timeout,
     restrictToWorkspace: config.tools?.restrictToWorkspace,
     cronService,
     subagentManager: subagent,
@@ -67,7 +67,7 @@ export async function startGateway(config: ClawflowConfig): Promise<GatewayContr
     if (job.payload.deliver && job.payload.channel && job.payload.to) {
       await bus.publishOutbound({
         channel: job.payload.channel,
-        chatId: job.payload.to,
+        chat_id: job.payload.to,
         content: response ?? '',
       })
     }
@@ -89,7 +89,7 @@ export async function startGateway(config: ClawflowConfig): Promise<GatewayContr
   else
     consola.warn('No channels enabled in config')
 
-  const cronJobs = cronService.listJobs(true)
+  const cronJobs = cronService.list_jobs(true)
   if (cronJobs.length > 0)
     consola.info(`${LOGO} Cron: ${cronJobs.length} job(s)`)
   consola.info(`${LOGO} Heartbeat: every ${heartbeatConfig.intervalS ?? 30 * 60}s`)
