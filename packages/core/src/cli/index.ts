@@ -9,6 +9,7 @@ import { defineCommand, runMain } from 'citty'
 import { consola } from 'consola'
 import { AgentLoop } from '../agent/loop'
 import { SubagentManager } from '../agent/subagent'
+import { startBridge } from '../bridge'
 import { MessageBus } from '../bus/queue'
 import { getApiBase, getApiKey, getWorkspacePathFromConfig, loadConfig, saveConfig } from '../config/loader'
 import { defaultConfig } from '../config/schema'
@@ -167,6 +168,29 @@ const main = defineCommand({
             if (!rows.some(([, on]) => on))
               consola.info('Enable in config: channels.telegram.enabled, etc.')
             outro('Done')
+          },
+        }),
+      },
+    }),
+    bridge: defineCommand({
+      meta: { description: 'WhatsApp WebSocket bridge (Baileys + crossws)' },
+      subCommands: {
+        start: defineCommand({
+          meta: { description: 'Start bridge server for WhatsApp channel' },
+          async run() {
+            const config = await loadConfig()
+            const bridgeConfig = config.bridge ?? { port: 3001, authDir: '~/.clawflow/whatsapp-auth' }
+            consola.info(`${LOGO} Starting WhatsApp bridge on port ${bridgeConfig.port ?? 3001}...`)
+            const server = await startBridge(bridgeConfig)
+            process.on('SIGINT', async () => {
+              consola.info('Shutting down bridge...')
+              await server.stop()
+              process.exit(0)
+            })
+            process.on('SIGTERM', async () => {
+              await server.stop()
+              process.exit(0)
+            })
           },
         }),
       },

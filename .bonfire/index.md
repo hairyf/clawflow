@@ -8,7 +8,7 @@ linear: false
 # Session Context: clawflow
 
 **Date**: 2025-02-07
-**Status**: Closed
+**Status**: Open
 **Branch**: main
 
 ---
@@ -25,7 +25,8 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
-- **2025-02-07** (本会话): Bonfire start → 实现 **heartbeat/**（HeartbeatService、config.heartbeat）、**providers/transcription**（GroqTranscriptionProvider、Telegram 语音转写）；任务 2、3 完成
+- **2025-02-07** (本会话): Bonfire start → 实现 **bridge/**（BridgeServer、crossws、Baileys、config.bridge、CLI `clawflow bridge start`）；任务 4 完成。Session ended: 健康检查通过，无断链或孤立 spec/doc。
+- **2025-02-07**: 实现 **heartbeat/**（HeartbeatService、config.heartbeat）、**providers/transcription**（GroqTranscriptionProvider、Telegram 语音转写）；任务 2、3 完成
 - **2025-02-07**: 实现 **channels/** 模块：base、manager、telegram、discord、feishu、whatsapp；config schema 增加 channels/gateway；CLI 增加 `channels status`
 - **2025-02-07**: Bonfire start；完成 nanobot vs clawflow 模块对比，整理未实现模块与实现差异清单，作为待办记入 Next Priorities
 
@@ -37,7 +38,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 1. [x] **channels/** - 已实现（base、manager、telegram、discord、feishu、whatsapp）
 2. [x] **heartbeat/** - HeartbeatService（定时读 HEARTBEAT.md 唤醒 agent）
 3. [x] **providers/transcription** - GroqTranscriptionProvider（语音转文字）
-4. [ ] **bridge/** - WhatsApp WebSocket 桥接（独立 TS 项目）
+4. [x] **bridge/** - WhatsApp WebSocket 桥接（crossws + Baileys，CLI: `clawflow bridge start`）
 5. [ ] **gateway 命令** - 启动 channels + heartbeat + cron + agent 的网关模式
 
 **实现差异**（待对齐）：
@@ -74,6 +75,7 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 - `packages/core/src/bus/` - 事件总线、队列
 - `packages/core/src/channels/` - 聊天渠道（base、manager、telegram、discord、feishu、whatsapp）
 - `packages/core/src/heartbeat/` - 定时读 HEARTBEAT.md 唤醒 agent（HeartbeatService）
+- `packages/core/src/bridge/` - WhatsApp WebSocket 桥接（crossws + Baileys）
 - `packages/core/src/tools/` - 工具注册、cron、filesystem、message、shell、spawn、web
 - `packages/core/src/providers/` - LLM 提供方（base、openai）、语音转写（transcription / Groq）
 - `packages/core/src/cron/` - 定时任务服务

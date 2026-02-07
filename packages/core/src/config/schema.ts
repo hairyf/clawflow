@@ -72,6 +72,12 @@ export interface HeartbeatConfig {
   intervalS?: number
 }
 
+/** WhatsApp bridge (WebSocket server + Baileys) */
+export interface BridgeConfig {
+  port?: number
+  authDir?: string
+}
+
 export interface ClawflowConfig {
   agents?: { defaults?: AgentDefaults }
   providers?: {
@@ -87,6 +93,7 @@ export interface ClawflowConfig {
   channels?: ChannelsConfig
   gateway?: GatewayConfig
   heartbeat?: HeartbeatConfig
+  bridge?: BridgeConfig
 }
 
 export const defaultConfig: ClawflowConfig = {
@@ -113,4 +120,5 @@ export const defaultConfig: ClawflowConfig = {
   },
   gateway: { host: '0.0.0.0', port: 18790 },
   heartbeat: { enabled: true, intervalS: 30 * 60 },
+  bridge: { port: 3001, authDir: '~/.clawflow/whatsapp-auth' },
 }

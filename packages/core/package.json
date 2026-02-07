@@ -44,6 +44,8 @@
   },
   "dependencies": {
     "@clack/prompts": "catalog:cli",
+    "@hapi/boom": "catalog:",
+    "@whiskeysockets/baileys": "catalog:",
     "c12": "catalog:",
     "citty": "catalog:",
     "consola": "catalog:",
@@ -53,10 +55,13 @@
     "destr": "catalog:",
     "ofetch": "catalog:",
     "pathe": "catalog:",
+    "pino": "catalog:",
+    "qrcode-terminal": "catalog:",
     "ws": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:types",
+    "@types/qrcode-terminal": "catalog:",
     "@types/ws": "catalog:",
     "tsdown": "catalog:cli",
     "tsx": "catalog:cli",
