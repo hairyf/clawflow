@@ -1,0 +1,118 @@
+/**
+ * Gateway: orchestrates channels + heartbeat + cron + agent.
+ * @see sources/nanobot/nanobot/cli/commands.py gateway()
+ */
+
+import type { ClawflowConfig } from '../config/schema'
+import type { CronJob } from '../cron/types'
+import { consola } from 'consola'
+import { AgentLoop } from '../agent/loop'
+import { SubagentManager } from '../agent/subagent'
+import { MessageBus } from '../bus/queue'
+import { ChannelManager } from '../channels/manager'
+import { getApiBase, getApiKey, getWorkspacePathFromConfig } from '../config/loader'
+import { CronService } from '../cron/service'
+import { HeartbeatService } from '../heartbeat/service'
+import { createOpenAIProvider } from '../providers/openai'
+import { getCronStorePath } from '../utils/helpers'
+
+const LOGO = '🐈'
+
+export interface GatewayController {
+  stop: () => Promise<void>
+}
+
+export async function startGateway(config: ClawflowConfig): Promise<GatewayController> {
+  const apiKey = getApiKey(config)
+  const apiBase = getApiBase(config)
+  if (!apiKey) {
+    throw new Error('No API key configured. Set providers.openrouter.apiKey in ~/.clawflow/config.json')
+  }
+
+  const workspace = getWorkspacePathFromConfig(config)
+  const model = config.agents?.defaults?.model ?? 'anthropic/claude-sonnet-4'
+  const heartbeatConfig = config.heartbeat ?? { enabled: true, intervalS: 30 * 60 }
+
+  const bus = new MessageBus()
+  const provider = createOpenAIProvider({
+    apiKey,
+    apiBase,
+    defaultModel: model,
+  })
+
+  const cronService = new CronService(getCronStorePath())
+  const subagent = new SubagentManager({
+    provider,
+    workspace,
+    bus,
+    model,
+    braveApiKey: config.tools?.web?.search?.apiKey,
+    execTimeout: config.tools?.exec?.timeout,
+    restrictToWorkspace: config.tools?.restrictToWorkspace,
+  })
+  const agent = new AgentLoop({
+    bus,
+    provider,
+    workspace,
+    model,
+    braveApiKey: config.tools?.web?.search?.apiKey,
+    execTimeout: config.tools?.exec?.timeout,
+    restrictToWorkspace: config.tools?.restrictToWorkspace,
+    cronService,
+    subagentManager: subagent,
+  })
+
+  cronService.onJob = async (job: CronJob) => {
+    const response = await agent.processDirect(
+      job.payload.message,
+      `cron:${job.id}`,
+      job.payload.channel ?? 'cli',
+      job.payload.to ?? 'direct',
+    )
+    if (job.payload.deliver && job.payload.channel && job.payload.to) {
+      await bus.publishOutbound({
+        channel: job.payload.channel,
+        chatId: job.payload.to,
+        content: response ?? '',
+      })
+    }
+    return response
+  }
+
+  const heartbeat = new HeartbeatService({
+    workspace,
+    onHeartbeat: async prompt => agent.processDirect(prompt, 'heartbeat'),
+    intervalS: heartbeatConfig.intervalS ?? 30 * 60,
+    enabled: heartbeatConfig.enabled ?? true,
+  })
+
+  const channelManager = new ChannelManager(config, bus)
+
+  const enabledChannels = channelManager.enabledChannels
+  if (enabledChannels.length > 0)
+    consola.info(`${LOGO} Channels: ${enabledChannels.join(', ')}`)
+  else
+    consola.warn('No channels enabled in config')
+
+  const cronJobs = cronService.listJobs(true)
+  if (cronJobs.length > 0)
+    consola.info(`${LOGO} Cron: ${cronJobs.length} job(s)`)
+  consola.info(`${LOGO} Heartbeat: every ${heartbeatConfig.intervalS ?? 30 * 60}s`)
+
+  cronService.start()
+  heartbeat.start()
+
+  await agent.run()
+  await channelManager.startAll()
+
+  return {
+    async stop() {
+      consola.info('Stopping gateway...')
+      heartbeat.stop()
+      cronService.stop()
+      agent.stop()
+      await channelManager.stopAll()
+      consola.info(`${LOGO} Gateway stopped`)
+    },
+  }
+}

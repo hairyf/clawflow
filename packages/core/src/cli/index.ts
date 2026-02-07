@@ -14,6 +14,7 @@ import { MessageBus } from '../bus/queue'
 import { getApiBase, getApiKey, getWorkspacePathFromConfig, loadConfig, saveConfig } from '../config/loader'
 import { defaultConfig } from '../config/schema'
 import { CronService } from '../cron/service'
+import { startGateway } from '../gateway'
 import { createOpenAIProvider } from '../providers/openai'
 import { getConfigPath, getCronStorePath, getWorkspacePath } from '../utils/helpers'
 
@@ -191,6 +192,30 @@ const main = defineCommand({
               await server.stop()
               process.exit(0)
             })
+          },
+        }),
+      },
+    }),
+    gateway: defineCommand({
+      meta: { description: 'Start gateway (channels + heartbeat + cron + agent)' },
+      subCommands: {
+        start: defineCommand({
+          meta: { description: 'Start the gateway' },
+          args: {
+            port: { type: 'string', alias: 'p', description: 'Gateway port (for future HTTP API)' },
+          },
+          async run({ args }) {
+            const config = await loadConfig()
+            const port = args.port ? Number(args.port) : config.gateway?.port ?? 18790
+            consola.info(`${LOGO} Starting gateway on port ${port}...`)
+            const controller = await startGateway(config)
+            const shutdown = async (): Promise<void> => {
+              await controller.stop()
+              process.exit(0)
+            }
+            process.on('SIGINT', shutdown)
+            process.on('SIGTERM', shutdown)
+            await new Promise<never>(() => {})
           },
         }),
       },

@@ -25,7 +25,8 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Recent Sessions
 
-- **2025-02-07** (本会话): Bonfire start → 实现 **bridge/**（BridgeServer、crossws、Baileys、config.bridge、CLI `clawflow bridge start`）；任务 4 完成。Session ended: 健康检查通过，无断链或孤立 spec/doc。
+- **2025-02-07** (本会话): 实现 **gateway 命令**（gateway/index.ts、CLI `clawflow gateway start`）；启动 channels + heartbeat + cron + agent 的网关模式；任务 5 完成。
+- **2025-02-07**: Bonfire start → 实现 **bridge/**（BridgeServer、crossws、Baileys、config.bridge、CLI `clawflow bridge start`）；任务 4 完成。Session ended: 健康检查通过，无断链或孤立 spec/doc。
 - **2025-02-07**: 实现 **heartbeat/**（HeartbeatService、config.heartbeat）、**providers/transcription**（GroqTranscriptionProvider、Telegram 语音转写）；任务 2、3 完成
 - **2025-02-07**: 实现 **channels/** 模块：base、manager、telegram、discord、feishu、whatsapp；config schema 增加 channels/gateway；CLI 增加 `channels status`
 - **2025-02-07**: Bonfire start；完成 nanobot vs clawflow 模块对比，整理未实现模块与实现差异清单，作为待办记入 Next Priorities
@@ -34,19 +35,30 @@ clawflow 是一个基于 nanobot 架构的 TypeScript/Node.js AI 代理框架，
 
 ## Next Session Priorities
 
-**未实现模块**（对照 nanobot）：
-1. [x] **channels/** - 已实现（base、manager、telegram、discord、feishu、whatsapp）
-2. [x] **heartbeat/** - HeartbeatService（定时读 HEARTBEAT.md 唤醒 agent）
-3. [x] **providers/transcription** - GroqTranscriptionProvider（语音转文字）
-4. [x] **bridge/** - WhatsApp WebSocket 桥接（crossws + Baileys，CLI: `clawflow bridge start`）
-5. [ ] **gateway 命令** - 启动 channels + heartbeat + cron + agent 的网关模式
+### 一、已实现模块
+1. [x] **channels/** - base、manager、telegram、discord、feishu、whatsapp
+2. [x] **heartbeat/** - HeartbeatService
+3. [x] **providers/transcription** - GroqTranscriptionProvider
+4. [x] **bridge/** - crossws + Baileys，CLI: `clawflow bridge start`
+5. [x] **gateway** - `clawflow gateway start`
 
-**实现差异**（待对齐）：
-6. [ ] **providers** - 多 provider 自动路由（nanobot 用 LiteLLM，clawflow 仅 OpenAI 兼容 API）
-7. [ ] **config schema** - 按 model 匹配 provider（channels/gateway 已补全）
-8. [ ] **cli 命令** - gateway、channels login、cron enable/disable/run（channels status 已实现）
-9. [ ] **cron add** - 支持 --at、--deliver、--to、--channel
-10. [ ] **cron service** - 增加 enableJob/disableJob
+### 二、CLI 命令差异
+6. [ ] **cron add** - 补齐 `--at`、`--deliver`、`--to`、`--channel`
+7. [ ] **cron enable** - `clawflow cron enable <job_id> [--disable]`
+8. [ ] **cron run** - `clawflow cron run <job_id> [--force]`
+9. [ ] **channels login** - WhatsApp 扫码（封装 bridge start）
+
+### 三、CronService API
+10. [ ] **enableJob** - `enableJob(jobId, enabled): CronJob | null`
+
+### 四、Config / Provider 路由
+11. [ ] **getApiKey** - 按 model 选择 provider（当前忽略 model 参数）
+12. [ ] **getApiBase** - 按 model 返回 apiBase
+13. [ ] **config schema** - 可选：zhipu、moonshot、deleteAfterRun（cron add）
+
+### 五、架构差异（可选）
+14. [ ] **多 provider 路由** - LiteLLM 风格或增强现有 loader
+15. [ ] **Bedrock 支持** - 若有需求
 
 ---
 
