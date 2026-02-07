@@ -1,7 +1,7 @@
 # 文件命名对照表
 
 **nanobot**: `sources/nanobot/nanobot/` (Python，snake_case)
-**nanobot-pm**: `packages/core/src/` (TypeScript)
+**nanobot-pm**: `packages/nanobot-pm/src/` (TypeScript)
 
 ---
 

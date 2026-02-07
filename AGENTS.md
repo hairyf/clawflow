@@ -26,7 +26,7 @@ nanobot-pm-engineerin
 ## 3. Syncing with Nanobot
 
 - **Reference source**: `sources/nanobot/nanobot/` (Python)
-- **Target source**: `packages/core/src/` (TypeScript)
+- **Target source**: `packages/nanobot-pm/src/` (TypeScript)
 - **Differences**: `.bonfire/specs/code-file-diff.md` documents intentional differences (LLM provider, implementation style).
 - **Behavior parity**: Match nanobot behavior where a corresponding module exists; document divergences in the diff spec.
 
@@ -34,7 +34,7 @@ nanobot-pm-engineerin
 
 ## 4. Adding New Features
 
-- Add unit tests in `packages/core/test/` mirroring the source layout.
+- Add unit tests in `packages/nanobot-pm/test/` mirroring the source layout.
 - Use Vitest with `describe` / `it`; prefer A/B-style tests when comparing with nanobot.
 - Update `.bonfire/specs/code-file-mapping.md` and `.bonfire/specs/code-file-diff.md` if adding or changing modules.
 - Use `snake_case` for all new identifiers.

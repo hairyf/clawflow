@@ -1,7 +1,7 @@
 # 代码文件差异表
 
 **nanobot**: `sources/nanobot/nanobot/` (Python)
-**nanobot-pm**: `packages/core/src/` (TypeScript)
+**nanobot-pm**: `packages/nanobot-pm/src/` (TypeScript)
 
 以下仅列出**有差异**的项；未列出的文件/API 视为命名或风格差异（snake_case ↔ camelCase），行为对齐。
 

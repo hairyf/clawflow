@@ -94,24 +94,24 @@
 
 ## 四、grep 统计（便于校验）
 
-运行以下命令可快速定位各项出现次数（在 packages/core 下）：
+运行以下命令可快速定位各项出现次数（在 packages/nanobot-pm 下）：
 
 ```bash
 # 方法
-rg -c "listMemoryFiles|appendToday|getRecentMemories" packages/core
-rg -c "getSkillMetadata|stripFrontmatter|getAlwaysSkills|loadSkillsForContext" packages/core
-rg -c "getOrCreate|addMessage|listSessions" packages/core
-rg -c "validateToolParams|toolToSchema|validateParams" packages/core
-rg -c "addJob|enableJob|listJobs" packages/core
-rg -c "getDataPath|getConfigPath|getWorkspacePath|getSessionsPath|getCronStorePath" packages/core
-rg -c "todayDate|truncateString|parseSessionKey|getRuntimeInfo|ensureDir|safeFilename" packages/core
-rg -c "loadConfig|saveConfig|migrateConfig|getApiKey|getApiBase|matchProviderByModel" packages/core
+rg -c "listMemoryFiles|appendToday|getRecentMemories" packages/nanobot-pm
+rg -c "getSkillMetadata|stripFrontmatter|getAlwaysSkills|loadSkillsForContext" packages/nanobot-pm
+rg -c "getOrCreate|addMessage|listSessions" packages/nanobot-pm
+rg -c "validateToolParams|toolToSchema|validateParams" packages/nanobot-pm
+rg -c "addJob|enableJob|listJobs" packages/nanobot-pm
+rg -c "getDataPath|getConfigPath|getWorkspacePath|getSessionsPath|getCronStorePath" packages/nanobot-pm
+rg -c "todayDate|truncateString|parseSessionKey|getRuntimeInfo|ensureDir|safeFilename" packages/nanobot-pm
+rg -c "loadConfig|saveConfig|migrateConfig|getApiKey|getApiBase|matchProviderByModel" packages/nanobot-pm
 
 # 属性
-rg -c "createdAt|updatedAt" packages/core
-rg -c "chatId|senderId" packages/core
-rg -c "deleteAfterRun|nextRunAtMs|everyMs|atMs" packages/core
-rg -c "allowedDir|execTimeout" packages/core
+rg -c "createdAt|updatedAt" packages/nanobot-pm
+rg -c "chatId|senderId" packages/nanobot-pm
+rg -c "deleteAfterRun|nextRunAtMs|everyMs|atMs" packages/nanobot-pm
+rg -c "allowedDir|execTimeout" packages/nanobot-pm
 ```
 
 ---

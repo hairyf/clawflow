@@ -1,7 +1,7 @@
 # 代码文件对照表
 
 **nanobot**: `sources/nanobot/nanobot/` (Python)
-**nanobot-pm**: `packages/core/src/` (TypeScript)
+**nanobot-pm**: `packages/nanobot-pm/src/` (TypeScript)
 
 ---
 
