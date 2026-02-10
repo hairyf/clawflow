@@ -1,5 +1,5 @@
 {
-  "name": "nanobot-pm",
+  "name": "agentic-ai",
   "type": "module",
   "version": "0.0.0",
   "description": "Nanobot PM CLI and core",
@@ -12,7 +12,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "bin": {
-    "nanobot-pm": "./bin/index.dev.mjs"
+    "agentic-ai": "./bin/index.dev.mjs"
   },
   "files": [
     "bin",
@@ -39,7 +39,7 @@
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.mts",
     "bin": {
-      "nanobot-pm": "./bin/index.mjs"
+      "agentic": "./bin/index.mjs"
     }
   },
   "dependencies": {

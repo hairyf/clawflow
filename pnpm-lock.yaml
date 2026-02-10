@@ -151,7 +151,7 @@ importers:
       lint-staged:
         specifier: catalog:cli
         version: 16.2.7
-      nanobot-pm:
+      agentic-ai:
         specifier: workspace:*
         version: link:packages/core
       publint:

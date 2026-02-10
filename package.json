@@ -1,5 +1,5 @@
 {
-  "name": "nanobot-pm-monorepo",
+  "name": "agentic-ai-monorepo",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.25.0",
@@ -7,12 +7,12 @@
   "author": "Hairyf <wwu710632@gmail.com>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/hairyf",
-  "homepage": "https://github.com/hairyf/nanobot-pm#readme",
+  "homepage": "https://github.com/hairyf/agentic-ai#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hairyf/nanobot-pm.git"
+    "url": "git+https://github.com/hairyf/agentic-ai.git"
   },
-  "bugs": "https://github.com/hairyf/nanobot-pm/issues",
+  "bugs": "https://github.com/hairyf/agentic-ai/issues",
   "keywords": [],
   "scripts": {
     "build": "pnpm -r run build",
@@ -20,7 +20,7 @@
     "lint": "eslint .",
     "prepublishOnly": "nr build",
     "release": "bumpp",
-    "start": "pnpm exec nanobot-pm",
+    "start": "pnpm exec agentic-ai",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "typecheck": "pnpm -r run typecheck",
@@ -32,10 +32,10 @@
     "@antfu/utils": "catalog:inlined",
     "@types/node": "catalog:types",
     "@vitest/coverage-v8": "catalog:",
+    "agentic-ai": "workspace:*",
     "bumpp": "catalog:cli",
     "eslint": "catalog:cli",
     "lint-staged": "catalog:cli",
-    "nanobot-pm": "workspace:*",
     "publint": "catalog:cli",
     "simple-git-hooks": "catalog:cli",
     "skills": "catalog:skills",
