@@ -145,7 +145,7 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.0.17(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@25.0.9)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2))
-      agentic-ai:
+      agentic-x:
         specifier: workspace:*
         version: link:packages/core
       bumpp:
@@ -272,7 +272,7 @@ importers:
 
   playground:
     dependencies:
-      agentic-ai:
+      agentic-x:
         specifier: workspace:*
         version: link:../packages/core
 

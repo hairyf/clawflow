@@ -1,4 +1,4 @@
-import { defineAgentic } from 'agentic-ai'
+import { defineAgentic } from 'agentic-x'
 import { x } from 'tinyexec'
 
 const engine = defineAgentic({

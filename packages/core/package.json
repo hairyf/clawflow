@@ -1,8 +1,8 @@
 {
-  "name": "agentic-ai",
+  "name": "agentic-x",
   "type": "module",
   "version": "0.0.0",
-  "description": "Nanobot PM CLI and core",
+  "description": "Agentic Engine",
   "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
@@ -12,7 +12,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "bin": {
-    "agentic-ai": "./bin/index.dev.mjs"
+    "agentic": "./bin/index.dev.mjs"
   },
   "files": [
     "bin",

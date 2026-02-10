@@ -1,5 +1,5 @@
 {
-  "name": "agentic-ai-monorepo",
+  "name": "agentic-x-monorepo",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.25.0",
@@ -7,12 +7,12 @@
   "author": "Hairyf <wwu710632@gmail.com>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/hairyf",
-  "homepage": "https://github.com/hairyf/agentic-ai#readme",
+  "homepage": "https://github.com/hairyf/agentic-x#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hairyf/agentic-ai.git"
+    "url": "git+https://github.com/hairyf/agentic-x.git"
   },
-  "bugs": "https://github.com/hairyf/agentic-ai/issues",
+  "bugs": "https://github.com/hairyf/agentic-x/issues",
   "keywords": [],
   "scripts": {
     "build": "pnpm -r run build",
@@ -20,7 +20,7 @@
     "lint": "eslint .",
     "prepublishOnly": "nr build",
     "release": "bumpp",
-    "start": "pnpm exec agentic-ai",
+    "start": "pnpm exec agentic-x",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "typecheck": "pnpm -r run typecheck",
@@ -32,7 +32,7 @@
     "@antfu/utils": "catalog:inlined",
     "@types/node": "catalog:types",
     "@vitest/coverage-v8": "catalog:",
-    "agentic-ai": "workspace:*",
+    "agentic-x": "workspace:*",
     "bumpp": "catalog:cli",
     "eslint": "catalog:cli",
     "lint-staged": "catalog:cli",

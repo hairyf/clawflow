@@ -6,7 +6,4 @@ export default defineConfig({
   format: ['esm'],
   clean: true,
   dts: true,
-  copy: [
-    'src/skills',
-  ],
 })
