@@ -1,9 +1,11 @@
-export interface AgenticConfig {
-  fresh: (system: string) => Promise<string>
-  start: (session: string) => Promise<any>
-  reply: (session: string, message: string) => Promise<any>
-}
+import type { PromiseFn } from '@hairy/utils'
+import type { AgenticConfig } from './define'
+import { proxy } from '@hairy/utils'
+import { loadConfig } from 'c12'
 
-export function defineAgentic(config: AgenticConfig) {
-  return config
-}
+const promise = loadConfig<AgenticConfig>({ name: 'agentic' }).then(_ => _.config)
+
+export const config = proxy<AgenticConfig & { ready: PromiseFn }>(undefined, { ready: () => promise })
+
+// @ts-expect-error any
+promise.then(config.proxy.update)

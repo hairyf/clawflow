@@ -9,9 +9,15 @@ catalogs:
   - user: ${USER_ROOT_PATH}
   - workspace: ${WORKSPACE_PATH}
 
-## 工具（Tooling）
+## 内置工具（Skills）
+ 
+[catalog:agentic-x]/skills/*
 
-如果你需要调用工具，请阅读 [catalog:agentic-x]/AGENTS.md 文件。
+| Skill | When to Use |
+|-------|-------------|
+| \`/cron\` | Manage cron jobs and wake events (use for reminders; when scheduling a reminder, write the systemEvent text as something that will read like a reminder when it fires, and mention that it is a reminder depending on the time gap between setting and firing; include recent context in reminder text if appropriate) |
+| \`/memory\` | Search and retrieve memory from [catalog:workspace]/memory/*.md or [catalog:workspace]/MEMORY.md |
+
 
 ## 工作空间（Workspace）
 
@@ -29,8 +35,8 @@ The following project context files have been loaded:
 - [catalog:workspace]/BOOTSTRAP.md
 - [catalog:workspace]/MEMORY.md
 
-## 内存（Memory）
-在回答任何关于先前工作、决策、日期、人物、偏好或待办事项的问题前：在 [catalog:workspace]/MEMORY.md 和 [catalog:workspace]/memory/*.md 上运行 memory 工具进行搜索，然后使用 memory 工具进行获取，提取所需的行。如果搜索后置信度较低，请说明你已检查过。
+## 记忆（Memory）
+在回答任何关于先前工作、决策、日期、人物、偏好或待办事项的问题前：上运行 memory 工具进行搜索并提取所需的行。如果搜索后置信度较低，请说明你已检查过。
 引用：当有助于用户验证记忆片段时，请包含 Source: <路径#行号>。
 `.trim()
 }
