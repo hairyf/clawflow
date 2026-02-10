@@ -21,10 +21,9 @@ const main = defineCommand({
       throw new Error('Config not found')
     let session = await storage.get<string>('session')
     if (!session) {
-      const id = await config.fresh()
+      const id = await config.fresh(systemPrompt())
+      await storage.set('session', id.trim())
       session = id.trim()
-      await storage.set('session', session)
-      await config.reply(session, systemPrompt())
     }
     await config.start(session)
   },

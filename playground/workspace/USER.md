@@ -7,13 +7,17 @@ read_when:
 
 *Learn about the person you're helping. Update this as you go.*
 
-- **Name:**
-- **What to call them:**
-- **Pronouns:** *(optional)*
-- **Timezone:**
+- **Name:** hairy
+- **What to call them:** hairy
+- **Email:** wwu710632@gmail.com
+- **Pronouns:** *(to be determined)*
+- **Timezone:** *(to be determined)*
 - **Notes:**
 
 ## Context
+
+Working on agentic-x project in D:/projects/clawflow
+Currently on branch: agentic-ai
 
 *(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)*
 

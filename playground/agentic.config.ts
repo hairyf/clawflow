@@ -1,12 +1,30 @@
+import { randomUUID } from 'node:crypto'
 import { defineAgentic } from 'agentic-x'
 import { x } from 'tinyexec'
 
-const engine = defineAgentic({
-  fresh: async () => x('agent create-chat').then(r => r.stdout),
+const agentic = defineAgentic({
+  // 初始化系统会话、返回会话 ID
+  fresh: async (system: string) => {
+    const sessionId = randomUUID()
+    await x(
+      'claude',
+      [
+        ...['--session-id', sessionId],
+        ...['--append-system-prompt', system],
+        ...['-p', 'init'],
+      ],
+      {
+        nodeOptions: { stdio: 'inherit' },
+      },
+    )
+    return sessionId
+  },
+  // 启动交互模式
   start: async (session: string) =>
-    x('agent', ['--resume', session], { nodeOptions: { stdio: 'inherit' } }),
+    x('claude', ['-r', session], { nodeOptions: { stdio: 'inherit' } }),
+  // 系统内部对话
   reply: async (session: string, message: string) =>
-    x('agent', ['-p', message, '--resume', session], { nodeOptions: { stdio: 'inherit' } }),
+    x('claude', ['-p', message, '-r', session], { nodeOptions: { stdio: 'inherit' } }),
 })
 
-export default engine
+export default agentic

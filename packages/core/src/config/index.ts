@@ -1,5 +1,5 @@
 export interface AgenticConfig {
-  fresh: () => Promise<string>
+  fresh: (system: string) => Promise<string>
   start: (session: string) => Promise<any>
   reply: (session: string, message: string) => Promise<any>
 }
