@@ -1,0 +1,8 @@
+{
+  "name": "playground",
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.25.0",
+  "dependencies": {
+    "agentic-ai": "workspace:*"
+  }
+}
