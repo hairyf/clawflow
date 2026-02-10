@@ -1,12 +1,1 @@
-export { BridgeServer, start_bridge, WhatsAppClient } from './bridge'
-export type { BridgeMessage, InboundMessage, SendCommand } from './bridge'
-export { BaseChannel, ChannelManager, DiscordChannel, FeishuChannel, TelegramChannel, WhatsAppChannel } from './channels/index'
-export type { ChannelConfig } from './channels/index'
-export { run } from './cli/index'
-export { start_gateway } from './gateway'
-export type { GatewayController } from './gateway'
-export { DEFAULT_HEARTBEAT_INTERVAL_S, HEARTBEAT_PROMPT, HeartbeatService } from './heartbeat/index'
-export type { HeartbeatServiceOptions, OnHeartbeatCallback } from './heartbeat/index'
-export { create_ai_sdk_provider } from './providers/ai-sdk'
-export { GroqTranscriptionProvider } from './providers/transcription'
-export type { GroqTranscriptionProviderOptions, TranscriptionProvider } from './providers/transcription'
+export const a = 1

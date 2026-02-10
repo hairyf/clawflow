@@ -43,17 +43,7 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/amazon-bedrock": "catalog:",
-    "@ai-sdk/anthropic": "catalog:",
-    "@ai-sdk/deepseek": "catalog:",
-    "@ai-sdk/google": "catalog:",
-    "@ai-sdk/groq": "catalog:",
-    "@ai-sdk/openai": "catalog:",
     "@clack/prompts": "catalog:cli",
-    "@hapi/boom": "catalog:",
-    "@openrouter/ai-sdk-provider": "catalog:",
-    "@whiskeysockets/baileys": "catalog:",
-    "ai": "catalog:",
     "c12": "catalog:",
     "citty": "catalog:",
     "consola": "catalog:",
