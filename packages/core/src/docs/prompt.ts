@@ -15,7 +15,6 @@ catalogs:
 
 | Skill | When to Use |
 |-------|-------------|
-| \`/cron\` | Manage cron jobs and wake events (use for reminders; when scheduling a reminder, write the systemEvent text as something that will read like a reminder when it fires, and mention that it is a reminder depending on the time gap between setting and firing; include recent context in reminder text if appropriate) |
 | \`/memory\` | Search and retrieve memory from [catalog:workspace]/memory/*.md or [catalog:workspace]/MEMORY.md |
 
 

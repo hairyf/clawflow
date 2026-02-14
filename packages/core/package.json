@@ -45,20 +45,13 @@
   "dependencies": {
     "@clack/prompts": "catalog:cli",
     "@hairy/utils": "catalog:",
-    "@nestjs/common": "catalog:",
-    "@nestjs/core": "catalog:",
-    "@nestjs/platform-express": "catalog:",
-    "@nestjs/schedule": "catalog:",
     "c12": "catalog:",
     "citty": "catalog:",
-    "consola": "catalog:",
-    "cron": "catalog:",
     "crossws": "catalog:",
     "defu": "catalog:",
     "destr": "catalog:",
     "ofetch": "catalog:",
     "pathe": "catalog:",
-    "pino": "catalog:",
     "qrcode-terminal": "catalog:",
     "tslib": "catalog:",
     "unstorage": "catalog:",
@@ -67,7 +60,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/cron": "catalog:",
     "@types/node": "catalog:types",
     "@types/qrcode-terminal": "catalog:",
     "@types/ws": "catalog:",
