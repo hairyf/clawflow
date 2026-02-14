@@ -15,3 +15,4 @@ test-project
 !/skills/**
 !/packages/core/src/skills
 !/packages/core/src/skills/**
+.docs
